@@ -45,7 +45,7 @@ theta = 0.5
 # for each character c / for each epoch (4 runs) / for each training instance i
 # -----------------------------------------------------------------------------
 for c in 1:7 # for each of 7 characters
-	for epochs in 1:40 # run through training set 4 times for each char
+	for epochs in 1:20 # run through training set 4 times for each char
 		for i in 1:21 # present each training instance
 			y_in=dot(vec(X_training[i]),vec(weights[c,:]))+bias[c] # inputs * weights + bias
 			y_out = int(sign(y_in)*int(abs(y_in)>theta)) # -1 < -theta else 1 > theta else 0
@@ -53,24 +53,22 @@ for c in 1:7 # for each of 7 characters
 				# good job; get a cookie
 				z=1;
 			else
-				bias[c] = bias[charnum] +  Y_training[c][i]
+				bias[c] = bias[c] +  Y_training[c][i]
 				weights[c,:] = weights[c,:] + transpose(Y_training[c][i]*X_training[i])
 			end
 		end
 	end
 end
 
-#'''
 # quick training test check
 for i in 1:21
 	for c in 1:7
-		pred = dot(vec(X_training[i]),vec(weights[c,:]))+bias[c]>theta
-		if pred
-			print(i,":",mod(i,7),":",mod(c,7),"\n")
-		end
+		pred = dot(vec(X_training[i]),vec(weights[c,:]))+bias[c]
+		#if pred
+			print(i,":",mod(i,7),":",mod(c,7),":",pred>theta,":",pred,"\n")
+		#end
 	end
 end
-#'''
 
 # -----------------------------------------------------------------------------
 # read test file
@@ -89,7 +87,7 @@ close(f)
 # -----------------------------------------------------------------------------
 # translate test into bipolar
 # -----------------------------------------------------------------------------
-X_testing = [[int(b[j][i]=='.' | b[j][i]=='@') for i in 1:63]*2-1 for j in 1:21]
+X_testing = [[int(b[j][i]=='.' || b[j][i]=='@') for i in 1:63]*2-1 for j in 1:21]
 # testing set has same pattern of characters as training set
 Y_testing = [[int(mod(i,7)==mod(j,7)) for i in 1:21]*2-1 for j in 1:7]
 
@@ -97,10 +95,15 @@ Y_testing = [[int(mod(i,7)==mod(j,7)) for i in 1:21]*2-1 for j in 1:7]
 # run test
 # -----------------------------------------------------------------------------
 for i in 1:21
+	preds=Float64[]
 	for c in 1:7
-		pred = dot(vec(X_testing[i]),vec(weights[c,:]))+bias[c]>theta
-		if pred
-			print(i,":",mod(i,7),":",mod(c,7),"\n")
-		end
+		push!(preds,dot(vec(X_testing[i]),vec(weights[c,:]))+bias[c])
+		#if pred > 10
+		#	#print(i,":",mod(i,7),":",mod(c,7),"\n")
+		#	print(i,":",mod(i,7),":",mod(c,7),":",pred>theta,":",pred,"\n")
+		#end
 	end
+	print(i,":",mod(i,7),":",mod(indmax(preds),7),"\n")
 end
+
+
