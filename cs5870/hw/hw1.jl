@@ -1,6 +1,6 @@
 #'''
-The training file is organized as ABCDEJKABCDEJKABCDEJK
-Each letter is in 7*9 character array
+#The training file is organized as ABCDEJKABCDEJKABCDEJK
+#Each letter is in 7*9 character array
 #'''
 
 datadir="/projects/uccs.edu/cs5870/data/";
@@ -45,7 +45,7 @@ theta = 0.5
 # for each character c / for each epoch (4 runs) / for each training instance i
 # -----------------------------------------------------------------------------
 for c in 1:7 # for each of 7 characters
-	for epochs in 1:10 # run through training set 4 times for each char
+	for epochs in 1:3 # run through training set 4 times for each char
 		for i in 1:21 # present each training instance
 			y_in=dot(vec(X_training[i]),vec(weights[c,:]))+bias[c] # inputs * weights + bias
 			y_out = int(sign(y_in)*int(abs(y_in)>theta)) # -1 < -theta else 1 > theta else 0
