@@ -1,3 +1,4 @@
+# -----------------------------------------------------------------------------
 # independent inner loop for training model on one digit/letter
 # -----------------------------------------------------------------------------
 function iterateModel(X, Y, wghts, bs, theta, c, nclass)
@@ -11,4 +12,16 @@ function iterateModel(X, Y, wghts, bs, theta, c, nclass)
 		end
 	end
 	return wghts[c,:], bs[c]
+end
+
+
+# -----------------------------------------------------------------------------
+# given weights and bias, predict X
+# -----------------------------------------------------------------------------
+function predictModel(X, wghts, bs)
+	preds = zeros(size(X)[1])
+	for i in 1:size(X)[1]
+		preds[i]=dot(vec(X[i,:]),vec(wghts))+bs
+	end
+	preds
 end
