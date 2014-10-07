@@ -39,7 +39,7 @@ weights = weights / (2*maximum(abs(weights)));
 # bias and theta threshold params
 # -----------------------------------------------------------------------------
 bias = ones(nclass);
-theta = 0.1;
+theta = .05;
 
 # -----------------------------------------------------------------------------
 # make training loop available to all threads
@@ -73,7 +73,7 @@ function pfit(f, X, Y, weights, bias, theta, idx, nclass)
     weights, bias
 end
 
-for epoch in 1:4
+for epoch in 1:40
 	println("epoch: ", epoch)
 	flush(STDOUT)
 	weights, bias = pfit(fitModel, X_train, Y_train, weights, bias, theta, idx, nclass)
@@ -129,3 +129,11 @@ flush(STDOUT)
 # idx=.7, epoch=4, theta=0.1, .858, .844
 # idx=.7, epoch=10, theta=0.1, .875, .858
 # idx=.7, epoch=40, theta=0.1, .892, .870
+# idx=.7, epoch=10, theta=0.5, .852, .838
+# idx=.7, epoch=10, theta=0.05, .895, .876
+# idx=.7, epoch=10, theta=0.01, .879, .865
+# idx=.7, epoch=40, theta=0.05, .905, .883
+
+quit()
+
+
