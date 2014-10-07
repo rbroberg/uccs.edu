@@ -18,7 +18,7 @@ csvdat = readcsv(IOBuffer(res.data));
 # data is 0-255 for gray valued images
 # use 70/30 for training/testing split
 
-idx=29400;
+idx=294;
 X_train=convert(Array{Float64,2},csvdat[2:idx,2:end]);
 Y_train=convert(Array{Int16,1},csvdat[2:idx,1]);
 X_test=convert(Array{Float64,2},csvdat[(idx+1):end,2:end]);
@@ -39,23 +39,24 @@ weights = weights / (2*maximum(abs(weights)));
 # bias and theta threshold params
 # -----------------------------------------------------------------------------
 bias = ones(nclass);
-theta = 0.5;
+theta = 0.1;
 
 # -----------------------------------------------------------------------------
 # make training loop available to all threads
 # -----------------------------------------------------------------------------
-require("/projects/uccs.edu/cs5870/hw/iterateModel.jl");
+# require("/projects/uccs.edu/cs5870/hw/iterateModel.jl");
 
 # -----------------------------------------------------------------------------
 # train the model
 # -----------------------------------------------------------------------------
 # parallel digits
 # -----------------------------------------------------------------------------
-for epochs in 1:784
+for epochs in 1:10
         println("epoch: ", epochs)
+		flush(STDOUT)
 	#@parallel for idx in 1:nclass
 	for idx in 1:nclass
-		weights[idx,:],bias[idx] = iterateModel(X_train, Y_train, weights, bias, theta, idx, nclass);
+		weights[idx,:],bias[idx] = fitModel(X_train, Y_train, weights, bias, theta, idx, nclass);
 	end
 end
 
