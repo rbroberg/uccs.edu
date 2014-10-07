@@ -18,7 +18,7 @@ csvdat = readcsv(IOBuffer(res.data));
 # data is 0-255 for gray valued images
 # use 70/30 for training/testing split
 
-idx=int(42000 * .70);
+idx=int(42000 * .80);
 X_train=convert(Array{Float64,2},csvdat[2:idx,2:end]);
 Y_train=convert(Array{Int16,1},csvdat[2:idx,1]);
 X_test=convert(Array{Float64,2},csvdat[(idx+1):end,2:end]);
@@ -125,6 +125,7 @@ Y_hat = [int(mod(indmax(Y_preds[i,:]),nclass)) for i in 1:size(Y_preds)[1]];
 println(sum(Y_hat.==Y_test) / (size(Y_test)[1]))
 flush(STDOUT)
 
+quit()
 
 # idx=.7, epoch=4, theta=0.1, .858, .844
 # idx=.7, epoch=10, theta=0.1, .875, .858
@@ -133,7 +134,5 @@ flush(STDOUT)
 # idx=.7, epoch=10, theta=0.05, .895, .876
 # idx=.7, epoch=10, theta=0.01, .879, .865
 # idx=.7, epoch=40, theta=0.05, .905, .883
-
-quit()
-
+# idx=.8, epoch=40, theta=0.05, .867, .848
 
