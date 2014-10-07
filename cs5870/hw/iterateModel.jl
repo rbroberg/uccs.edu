@@ -14,7 +14,6 @@ function iterateModel(X, Y, wghts, bs, theta, c, nclass)
 	return wghts[c,:], bs[c]
 end
 
-
 # -----------------------------------------------------------------------------
 # given weights and bias, predict X
 # -----------------------------------------------------------------------------

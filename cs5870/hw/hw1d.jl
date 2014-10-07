@@ -1,6 +1,7 @@
 # Pkg.add("Requests")
 using Requests;
 
+
 # -----------------------------------------------------------------------------
 # read data
 # -----------------------------------------------------------------------------
@@ -51,6 +52,7 @@ require("/projects/uccs.edu/cs5870/hw/iterateModel.jl");
 # parallel digits
 # -----------------------------------------------------------------------------
 for epochs in 1:784
+        println("epoch: ", epochs)
 	#@parallel for idx in 1:nclass
 	for idx in 1:nclass
 		weights[idx,:],bias[idx] = iterateModel(X_train, Y_train, weights, bias, theta, idx, nclass);
@@ -81,4 +83,5 @@ for c in 1:nclass
 end
 Y_hat = [int(mod(indmax(Y_preds[i,:]),nclass)) for i in 1:size(Y_preds)[1]];
 print(sum(Y_hat.==Y_test) / (size(Y_test)[1]))
+
 
