@@ -9,23 +9,18 @@ res = get(daturl);
 csvdat = readcsv(IOBuffer(res.data));
 
 # -----------------------------------------------------------------------------
-# prepare data
+# prepare training data
 # -----------------------------------------------------------------------------
 # first line are column headers
 # first column are digit labels
 # size is 42001 x 785
 # data is 0-255 for gray valued images
-# use 70/30 for training/testing split
-
-idx=int(42000 * .80);
-X_train=convert(Array{Float64,2},csvdat[2:idx,2:end]);
-Y_train=convert(Array{Int16,1},csvdat[2:idx,1]);
-X_test=convert(Array{Float64,2},csvdat[(idx+1):end,2:end]);
-Y_test=convert(Array{Int16,1},csvdat[(idx+1):end,1]);
+idx
+X_train=convert(Array{Float64,2},csvdat[2:end,2:end]);
+Y_train=convert(Array{Int16,1},csvdat[2:end,1]);
 
 # normalize to bipolar -1,1
 X_train=(X_train/255)*2-1;
-X_test=(X_test/255)*2-1;
 
 # -----------------------------------------------------------------------------
 # create weights for y_in for each of 10 digits
@@ -157,6 +152,17 @@ flush(STDOUT)
 # -----------------------------------------------------------------------------
 # run test
 # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# run test
+# -----------------------------------------------------------------------------
+daturl="http://rhinohide.org/data/www.kaggle.com/c/digit-recognizer/download/test.csv";
+res = get(daturl);
+csvdat = readcsv(IOBuffer(res.data));
+X_test=convert(Array{Float64,2},csvdat[2:end,1:end]);
+
+# normalize to bipolar -1,1
+X_test=(X_test/255)*2-1;
+
 Y_hat=zeros(size(Y_test)[1]);
 for k in 1:size(Y_test)[1]
 	x=[dot(vec(X_test[k,:]),vec(weights[pairs[a][1]+1,pairs[a][2]+1,:]))+bias[pairs[a][1]+1,pairs[a][2]+1] for a in 1:npairs]
