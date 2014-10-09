@@ -146,7 +146,12 @@ X_test=convert(Array{Float64,2},csvdat[2:end,1:end]);
 X_test=(X_test/255)*2-1;
 
 Y_hat=zeros(size(X_test)[1]);
-Y_hat=ppred(predictModelPairwise, Y_hat, X_test, weights, bias, pairs)
+#Y_hat=ppred(predictModelPairwise, Y_hat, X_test, weights, bias, pairs)
+for k in 1:size(Y_test)[1]
+	x=[dot(vec(X_test[k,:]),vec(weights[pairs[a][1]+1,pairs[a][2]+1,:]))+bias[pairs[a][1]+1,pairs[a][2]+1] for a in 1:npairs]
+	x=convert(Array{Float64,1},x)
+	Y_hat[k]=indmax([dot(x,d[:,b]) for b in 1:10])-1
+end
 
 # -----------------------------------------------------------------------------
 # kaggle submission
