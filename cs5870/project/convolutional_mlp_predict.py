@@ -176,7 +176,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # Reshape matrix of rasterized images of shape (batch_size, 28 * 28)
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
     # (28, 28) is the size of MNIST images.
-    d = (train_set_x.get_value()).shape[1]
+    d = int(((train_set_x.get_value()).shape[1])**2)
     layer0_input = x.reshape((batch_size, 1, d, d))
     
     # Construct the first convolutional pooling layer:
@@ -184,7 +184,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # maxpooling reduces this further to (24/2, 24/2) = (12, 12)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 12, 12)
     
-    # filtering reduces the image size to (16-1+1 , 16-1+1) = (16, 16)
+    # filtering reduces the image size to (16-5+1 , 16-5+1) = (16, 16)
     # maxpooling reduces this further to (16/2, 16/2) = (8, 8)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
     nb = 1 # neighborhood was original 5, now 1
