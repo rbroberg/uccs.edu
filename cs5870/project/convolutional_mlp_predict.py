@@ -144,6 +144,21 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     :param nkerns: number of kernels on each layer
     """
     
+    '''
+    case=cases[0][0]
+    npre=cases[0][1]
+    ninter=cases[0][2]
+    ntest=cases[0][3]
+    features=["cc"]
+    split=0.7
+    learning_rate=0.1
+    n_epochs=84
+    casenum=0,
+    nkerns=[20, 50]
+    batch_size=12
+    split=0.7 
+    '''
+
     rng = numpy.random.RandomState(23455)
     
     datasets = load_data(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cc"],split)
@@ -230,6 +245,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     cost = layer3.negative_log_likelihood(y)
     
     # create a function to compute the mistakes that are made by the model
+    # works great if you have a vector of "known classes" for test data
     #test_model = theano.function(
     #    [index],
     #    layer3.errors(y),
@@ -238,6 +254,15 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     #        y: test_set_y[index * batch_size: (index + 1) * batch_size]
     #    }
     #)
+    
+    # create a function to predict labels that are made by the model
+    model_predict_batch = theano.function(
+		[index], 
+		layer3.y_pred,
+        givens={
+			x: test_set_x[index * batch_size: (index + 1) * batch_size]
+        }
+    )
     
     validate_model = theano.function(
         [index],
@@ -355,9 +380,19 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-if __name__ == '__main__':
-    evaluate_lenet5()
+	p=[model_predict(i) for i in xrange(n_test_batches)]
+	p=numpy.array(p)
+	p=p.reshape((p.shape[0]*p.shape[1]))
+	return(p)
 
+if __name__ == '__main__':
+	for c in range(len(cases)):
+		p=evaluate_lenet5(casenum=c)
+		for n in range(cases[c][3]):
+			if n < len(p):
+				print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(p[n])]))
+			else:
+				print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(0.00123)]))
 
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
