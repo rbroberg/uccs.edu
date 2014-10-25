@@ -17,6 +17,7 @@ def load_data(case,npre,ninter,ntest,features, split):
         for i in range(dat.shape[0]):
             dat2[i,:]=reshape_crosscorr(dat[i,:]).reshape(1,n**2)
         dat=dat2
+    
     dat_train=dat[0:(npre+ninter),:]
     dat_test=dat[(npre+ninter):,:]
     dat_labels=hstack((ones(npre),zeros(ninter)))
@@ -26,13 +27,14 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat=genfromtxt(f, delimiter=',')
             dat_train=hstack((dat_train,dat[0:(npre+ninter),:]))
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
+    
     # pad the preictal datasets to balance number of ictal
-    # pad the preictal datasets to balance number of ictal
-    rep=ninter/npre# int
+    rep=ninter/npre # int
     dat_pre=zeros((rep*npre,dat_train.shape[1]))
     for n in range(rep):
         i=npre*n;j=npre*(n+1)
         dat_pre[i:j,:]=dat_train[0:npre,:]
+    
     dat_train=vstack((dat_pre,dat_train[npre:,:]))
     #randomize draw
     ipre=[i for i in range(dat_train.shape[0])]
