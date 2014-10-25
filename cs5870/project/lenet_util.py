@@ -1,5 +1,6 @@
 from numpy import genfromtxt,vstack, hstack, zeros, ones
 from theano import shared
+import theano.tensor as T
 
 def load_data(case,npre,ninter,ntest,features, split):
     datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
