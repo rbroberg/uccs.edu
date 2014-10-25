@@ -386,13 +386,15 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     return(p)
 
 if __name__ == '__main__':
+	f1=open('./testfile', 'w')
     for c in range(len(cases)):
         p=evaluate_lenet5(casenum=c)
         for n in range(cases[c][3]):
             if n < len(p):
-                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat",str(p[n])])]))
+                print >> f1 (",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat")]),str(p[n]]))
             else:
-                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat",str(0.00123)])]))
+                print >> f1 (",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat"]),str(0.00123)]))
+	f1.close()
 
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
