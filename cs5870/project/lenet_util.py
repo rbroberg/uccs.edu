@@ -1,6 +1,7 @@
 from numpy import genfromtxt,vstack, hstack, zeros, ones
 from theano import shared
 import theano.tensor as T
+import numpy.random
 
 # since the data has a native class ratio of about 20:1
 # increase the number of preictal cases
