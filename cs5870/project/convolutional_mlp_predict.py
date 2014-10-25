@@ -127,7 +127,7 @@ class LeNetConvPoolLayer(object):
 # TODO: batch_size seems ill-suited for variable sized data sets
 def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                     casenum=0,
-                    nkerns=[20, 50], batch_size=2, split=0.5):
+                    nkerns=[20, 50], batch_size=12, split=0.7):
     """ lenet on UPenn EEG dataset
 
     :type learning_rate: float
@@ -176,7 +176,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # Reshape matrix of rasterized images of shape (batch_size, 28 * 28)
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
     # (28, 28) is the size of MNIST images.
-    d = int(((train_set_x.get_value()).shape[1])**2)
+    d = int(((train_set_x.get_value()).shape[1])**0.5)
     layer0_input = x.reshape((batch_size, 1, d, d))
     
     # Construct the first convolutional pooling layer:
@@ -230,14 +230,14 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     cost = layer3.negative_log_likelihood(y)
     
     # create a function to compute the mistakes that are made by the model
-    test_model = theano.function(
-        [index],
-        layer3.errors(y),
-        givens={
-            x: test_set_x[index * batch_size: (index + 1) * batch_size],
-            y: test_set_y[index * batch_size: (index + 1) * batch_size]
-        }
-    )
+    #test_model = theano.function(
+    #    [index],
+    #    layer3.errors(y),
+    #    givens={
+    #        x: test_set_x[index * batch_size: (index + 1) * batch_size],
+    #        y: test_set_y[index * batch_size: (index + 1) * batch_size]
+    #    }
+    #)
     
     validate_model = theano.function(
         [index],
@@ -280,7 +280,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     ###############
     print '... training'
     # early-stopping parameters
-    patience = 1000  # look as this many examples regardless (was 10000)
+    patience = 10000  # look as this many examples regardless (was 10000)
     patience_increase = 2  # wait this much longer when a new best is
                            # found
     improvement_threshold = 0.995  # a relative improvement of this much is
@@ -332,15 +332,15 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                     best_iter = iter
                     
                     # test it on the test set
-                    test_losses = [
-                        test_model(i)
-                        for i in xrange(n_test_batches)
-                    ]
-                    test_score = numpy.mean(test_losses)
-                    print(('     epoch %i, minibatch %i/%i, test error of '
-                           'best model %f %%') %
-                          (epoch, minibatch_index + 1, n_train_batches,
-                           test_score * 100.))
+                    #test_losses = [
+                    #    test_model(i)
+                    #    for i in xrange(n_test_batches)
+                    #]
+                    #test_score = numpy.mean(test_losses)
+                    #print(('     epoch %i, minibatch %i/%i, test error of '
+                    #       'best model %f %%') %
+                    #      (epoch, minibatch_index + 1, n_train_batches,
+                    #       test_score * 100.))
                     
             if patience <= iter:
                 done_looping = True
