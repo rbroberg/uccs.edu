@@ -25,13 +25,13 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat=genfromtxt(f, delimiter=',')
             dat_train=hstack((dat_train,dat[0:(npre+ninter),:]))
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
-	# pad the preictal datasets to balance number of ictal
-	rep=ninter/npre# int
-	dat_pre=zeros((rep*npre,dat_train.shape[1]))
-	for n in range(rep):
-		i=npre*n;j=npre*(n+1)
-		dat_pre[i:j,:]=dat_train[0:npre,:]
-	dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
+    # pad the preictal datasets to balance number of ictal
+    rep=ninter/npre# int
+    dat_pre=zeros((rep*npre,dat_train.shape[1]))
+    for n in range(rep):
+        i=npre*n;j=npre*(n+1)
+        dat_pre[i:j,:]=dat_train[0:npre,:]
+    dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
     # split has to be handled with weighting of pre/inter
     mpre=int(round(npre*rep*split))
     minter=int(round(ninter*split))
