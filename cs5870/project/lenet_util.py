@@ -33,9 +33,9 @@ def load_data(case,npre,ninter,ntest,features, split):
         dat_pre[i:j,:]=dat_train[0:npre,:]
     dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
     #TODO: randomize draw
-	ipre=[i for i in range(dat_xtrain.shape[0])]
-	random.shuffle(ipre)
-	idx=int(dat_xtrain.shape[0]*split)
+    ipre=[i for i in range(dat_xtrain.shape[0])]
+    random.shuffle(ipre)
+    idx=int(dat_xtrain.shape[0]*split)
     x_train=dat_train[ipre[0,idx],:]
     x_valid=dat_train[ipre[idx:],:]
     dat_y=hstack((ones(npre*rep),zeros(minter)))
