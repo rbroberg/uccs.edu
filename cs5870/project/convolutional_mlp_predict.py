@@ -256,7 +256,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     #)
     
     # create a function to predict labels that are made by the model
-    model_predict_batch = theano.function(
+    model_predict = theano.function(
         [index], 
         layer3.y_pred,
         givens={
