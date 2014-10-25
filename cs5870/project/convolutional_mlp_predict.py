@@ -257,10 +257,10 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     
     # create a function to predict labels that are made by the model
     model_predict_batch = theano.function(
-		[index], 
-		layer3.y_pred,
+        [index], 
+        layer3.y_pred,
         givens={
-			x: test_set_x[index * batch_size: (index + 1) * batch_size]
+            x: test_set_x[index * batch_size: (index + 1) * batch_size]
         }
     )
     
@@ -380,19 +380,19 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-	p=[model_predict(i) for i in xrange(n_test_batches)]
-	p=numpy.array(p)
-	p=p.reshape((p.shape[0]*p.shape[1]))
-	return(p)
+    p=[model_predict(i) for i in xrange(n_test_batches)]
+    p=numpy.array(p)
+    p=p.reshape((p.shape[0]*p.shape[1]))
+    return(p)
 
 if __name__ == '__main__':
-	for c in range(len(cases)):
-		p=evaluate_lenet5(casenum=c)
-		for n in range(cases[c][3]):
-			if n < len(p):
-				print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(p[n])]))
-			else:
-				print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(0.00123)]))
+    for c in range(len(cases)):
+        p=evaluate_lenet5(casenum=c)
+        for n in range(cases[c][3]):
+            if n < len(p):
+                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(p[n])]))
+            else:
+                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(0.00123)]))
 
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
