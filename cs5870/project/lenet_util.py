@@ -32,14 +32,15 @@ def load_data(case,npre,ninter,ntest,features, split):
         i=npre*n;j=npre*(n+1)
         dat_pre[i:j,:]=dat_train[0:npre,:]
     dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
-    # split has to be handled with weighting of pre/inter
-    mpre=int(round(npre*rep*split))
-    minter=int(round(ninter*split))
     #TODO: randomize draw
-    x_train=vstack((dat_train[0:mpre,:],dat_train[npre*rep:(npre*rep+minter),]))
-    x_valid=vstack((dat_train[mpre:npre*rep,:],dat_train[(npre*rep+minter):(npre*rep+ninter),]))
-    y_train=hstack((ones(mpre),zeros(minter)))
-    y_valid=hstack((ones(npre*rep-mpre),zeros(ninter-minter)))
+	ipre=[i for i in range(dat_xtrain.shape[0])]
+	random.shuffle(ipre)
+	idx=int(dat_xtrain.shape[0]*split)
+    x_train=dat_train[ipre[0,idx],:]
+    x_valid=dat_train[ipre[idx:],:]
+    dat_y=hstack((ones(npre*rep),zeros(minter)))
+    y_train=dat_y[ipre[0,idx],:]
+    y_valid=dat_y[ipre[idx:],:]
     x_test=dat_test
     y_test=zeros(x_test.shape[0])
     return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
