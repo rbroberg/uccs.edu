@@ -390,9 +390,9 @@ if __name__ == '__main__':
         p=evaluate_lenet5(casenum=c)
         for n in range(cases[c][3]):
             if n < len(p):
-                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(p[n])]))
+                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat",str(p[n])]))
             else:
-                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4))+".mat",str(0.00123)]))
+                print(",".join(["_".join([cases[c][0],"test",str(n).zfill(4)+".mat",str(0.00123)]))
 
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
