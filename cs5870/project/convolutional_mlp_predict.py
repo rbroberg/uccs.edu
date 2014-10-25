@@ -127,7 +127,7 @@ class LeNetConvPoolLayer(object):
 # TODO: batch_size seems ill-suited for variable sized data sets
 def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                     casenum=0,
-                    nkerns=[20, 50], batch_size=2):
+                    nkerns=[20, 50], batch_size=2, split=0.5):
     """ lenet on UPenn EEG dataset
 
     :type learning_rate: float
@@ -143,31 +143,31 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     :type nkerns: list of ints
     :param nkerns: number of kernels on each layer
     """
-
+    
     rng = numpy.random.RandomState(23455)
     
-    datasets = load_data(cases[0][0],cases[0][1],cases[0][2],cases[0][3],["cc"],0.5)
+    datasets = load_data(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cc"],split)
     
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
     test_set_x, test_set_y = datasets[2]
     
     # compute number of minibatches for training, validation and testing
-    n_train_batches = train_set_x.shape[0] 
-    n_valid_batches = valid_set_x.shape[0]
-    n_test_batches = test_set_x.shape[0]
+    n_train_batches = train_set_x.get_value().shape[0] 
+    n_valid_batches = valid_set_x.get_value().shape[0]
+    n_test_batches = test_set_x.get_value().shape[0]
     n_train_batches /= batch_size
     n_valid_batches /= batch_size
     n_test_batches /= batch_size
     
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
-
+    
     # start-snippet-1
     x = T.matrix('x')   # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
                         # [int] labels
-
+    
     ######################
     # BUILD ACTUAL MODEL #
     ######################
@@ -176,14 +176,14 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # Reshape matrix of rasterized images of shape (batch_size, 28 * 28)
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
     # (28, 28) is the size of MNIST images.
-    d = reshape_crosscorr(train_set_x[1,:]).shape[1]
+    d = reshape_crosscorr(train_set_x.get_value()[1,:]).shape[1]
     layer0_input = x.reshape((batch_size, 1, d, d))
-
+    
     # Construct the first convolutional pooling layer:
     # filtering reduces the image size to (28-5+1 , 28-5+1) = (24, 24)
     # maxpooling reduces this further to (24/2, 24/2) = (12, 12)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 12, 12)
-	
+    
     # filtering reduces the image size to (16-1+1 , 16-1+1) = (16, 16)
     # maxpooling reduces this further to (16/2, 16/2) = (8, 8)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
@@ -195,7 +195,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
         filter_shape=(nkerns[0], 1, nb, nb),
         poolsize=(2, 2)
     )
-
+    
     # Construct the second convolutional pooling layer
     # filtering reduces the image size to (8-1+1, 8-1+1) = (8, 8)
     # maxpooling reduces this further to (8/2, 8/2) = (4, 4)
@@ -207,13 +207,13 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
         filter_shape=(nkerns[1], nkerns[0], 4, 4),
         poolsize=(2, 2)
     )
-
+    
     # the HiddenLayer being fully-connected, it operates on 2D matrices of
     # shape (batch_size, num_pixels) (i.e matrix of rasterized images).
     # This will generate a matrix of shape (batch_size, nkerns[1] * 4 * 4),
     # or (500, 50 * 4 * 4) = (500, 800) with the default values.
     layer2_input = layer1.output.flatten(2)
-
+    
     # construct a fully-connected sigmoidal layer
     layer2 = HiddenLayer(
         rng,
@@ -222,13 +222,13 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
         n_out=batch_size,
         activation=T.tanh
     )
-
+    
     # classify the values of the fully-connected sigmoidal layer
     layer3 = LogisticRegression(input=layer2.output, n_in=batch_size, n_out=10)
-
+    
     # the cost we minimize during training is the NLL of the model
     cost = layer3.negative_log_likelihood(y)
-
+    
     # create a function to compute the mistakes that are made by the model
     test_model = theano.function(
         [index],
@@ -238,7 +238,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
             y: test_set_y[index * batch_size: (index + 1) * batch_size]
         }
     )
-
+    
     validate_model = theano.function(
         [index],
         layer3.errors(y),
@@ -247,13 +247,13 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
             y: valid_set_y[index * batch_size: (index + 1) * batch_size]
         }
     )
-
+    
     # create a list of all model parameters to be fit by gradient descent
     params = layer3.params + layer2.params + layer1.params + layer0.params
-
+    
     # create a list of gradients for all model parameters
     grads = T.grad(cost, params)
-
+    
     # train_model is a function that updates the model parameters by
     # SGD Since this model has many parameters, it would be tedious to
     # manually create an update rule for each model parameter. We thus
@@ -263,7 +263,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
         (param_i, param_i - learning_rate * grad_i)
         for param_i, grad_i in zip(params, grads)
     ]
-
+    
     train_model = theano.function(
         [index],
         cost,
@@ -274,7 +274,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
         }
     )
     # end-snippet-1
-
+    
     ###############
     # TRAIN MODEL #
     ###############
@@ -290,27 +290,27 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                                   # minibatche before checking the network
                                   # on the validation set; in this case we
                                   # check every epoch
-
+    
     best_validation_loss = numpy.inf
     best_iter = 0
     test_score = 0.
     start_time = time.clock()
-
+    
     epoch = 0
     done_looping = False
-
+    
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
-
+        
             iter = (epoch - 1) * n_train_batches + minibatch_index
-
+            
             if iter % 100 == 0:
                 print 'training @ iter = ', iter
             cost_ij = train_model(minibatch_index)
-
+            
             if (iter + 1) % validation_frequency == 0:
-
+                
                 # compute zero-one loss on validation set
                 validation_losses = [validate_model(i) for i
                                      in xrange(n_valid_batches)]
@@ -318,19 +318,19 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                 print('epoch %i, minibatch %i/%i, validation error %f %%' %
                       (epoch, minibatch_index + 1, n_train_batches,
                        this_validation_loss * 100.))
-
+                
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
-
+                    
                     #improve patience if loss improvement is good enough
                     if this_validation_loss < best_validation_loss *  \
                        improvement_threshold:
                         patience = max(patience, iter * patience_increase)
-
+                    
                     # save best validation score and iteration number
                     best_validation_loss = this_validation_loss
                     best_iter = iter
-
+                    
                     # test it on the test set
                     test_losses = [
                         test_model(i)
@@ -341,11 +341,11 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
                            'best model %f %%') %
                           (epoch, minibatch_index + 1, n_train_batches,
                            test_score * 100.))
-
+                    
             if patience <= iter:
                 done_looping = True
                 break
-
+    
     end_time = time.clock()
     print('Optimization complete.')
     print('Best validation score of %f %% obtained at iteration %i, '

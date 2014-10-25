@@ -1,4 +1,5 @@
 from numpy import genfromtxt,vstack, hstack, zeros, ones
+from theano import shared
 
 def load_data(case,npre,ninter,ntest,features, split):
     datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
@@ -13,7 +14,6 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat=genfromtxt(f, delimiter=',')
             dat_train=hstack((dat_train,dat[0:(npre+ninter),:]))
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
-    
     # split has to be handled with weighting of pre/inter
     mpre=int(round(npre*split))
     minter=int(round(ninter*split))
@@ -24,7 +24,7 @@ def load_data(case,npre,ninter,ntest,features, split):
     y_valid=hstack((ones(npre-mpre),zeros(ninter-minter)))
     x_test=dat_test
     y_test=zeros(x_test.shape[0])
-    return [(x_valid, y_train), (x_valid, y_valid), (x_test,y_test)]
+    return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
 
 def reshape_crosscorr(diag):
     d=len(diag)
