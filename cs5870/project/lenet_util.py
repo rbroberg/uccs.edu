@@ -27,21 +27,24 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat_train=hstack((dat_train,dat[0:(npre+ninter),:]))
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
     # pad the preictal datasets to balance number of ictal
+    # pad the preictal datasets to balance number of ictal
     rep=ninter/npre# int
     dat_pre=zeros((rep*npre,dat_train.shape[1]))
     for n in range(rep):
         i=npre*n;j=npre*(n+1)
         dat_pre[i:j,:]=dat_train[0:npre,:]
-    dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
+    dat_train=vstack((dat_pre,dat_train[npre:,:]))
     #TODO: randomize draw
-    ipre=[i for i in range(dat_xtrain.shape[0])]
-    random.shuffle(ipre)
-    idx=int(dat_xtrain.shape[0]*split)
-    x_train=dat_train[ipre[0,idx],:]
+    ipre=[i for i in range(dat_train.shape[0])]
+    numpy.random.shuffle(ipre)
+    idx=int(dat_train.shape[0]*split)
+    x_train=dat_train[ipre[0:idx],:]
     x_valid=dat_train[ipre[idx:],:]
-    dat_y=hstack((ones(npre*rep),zeros(minter)))
-    y_train=dat_y[ipre[0,idx],:]
-    y_valid=dat_y[ipre[idx:],:]
+    dat_y=hstack((ones(npre*rep),zeros(ninter)))
+    y_train=dat_y[ipre[0:idx]]
+    y_valid=dat_y[ipre[idx:]]
+    x_test=dat_test
+    y_test=zeros(x_test.shape[0])
     x_test=dat_test
     y_test=zeros(x_test.shape[0])
     return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
