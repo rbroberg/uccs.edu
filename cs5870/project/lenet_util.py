@@ -6,6 +6,14 @@ def load_data(case,npre,ninter,ntest,features, split):
     datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
     f=datadir+case+"/"+features[0]+".csv"
     dat=genfromtxt(f, delimiter=',')
+	# if this feature is 'cc' then reshape
+	if features[0]=="cc":
+	    d=dat.shape[1]
+		n=(int(round((120.*2.*4.)**0.5))+1)/2
+		dat2=zeros((dat.shape[0],n))
+		for i in range(dat.shape[0]):
+			dat2[i,:]=reshape_crosscorr(dat[i,:])
+		dat=dat2
     dat_train=dat[0:(npre+ninter),:]
     dat_test=dat[(npre+ninter):,:]
     dat_labels=hstack((ones(npre),zeros(ninter)))
