@@ -2,6 +2,8 @@ from numpy import genfromtxt,vstack, hstack, zeros, ones
 from theano import shared
 import theano.tensor as T
 
+# since the data has a native class ratio of about 20:1
+# increase the number of preictal cases
 def load_data(case,npre,ninter,ntest,features, split):
     datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
     f=datadir+case+"/"+features[0]+".csv"
@@ -23,14 +25,21 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat=genfromtxt(f, delimiter=',')
             dat_train=hstack((dat_train,dat[0:(npre+ninter),:]))
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
+	# pad the preictal datasets to balance number of ictal
+	rep=ninter/npre# int
+	dat_pre=zeros((rep*npre,dat_train.shape[1]))
+	for n in range(rep):
+		i=npre*n;j=npre*(n+1)
+		dat_pre[i:j,:]=dat_train[0:npre,:]
+	dat_xtrain=vstack((dat_pre,dat_train[npre:,:]))
     # split has to be handled with weighting of pre/inter
-    mpre=int(round(npre*split))
+    mpre=int(round(npre*rep*split))
     minter=int(round(ninter*split))
     #TODO: randomize draw
-    x_train=vstack((dat_train[0:mpre,:],dat_train[npre:(npre+minter),]))
-    x_valid=vstack((dat_train[mpre:npre,:],dat_train[(npre+minter):(npre+ninter),]))
+    x_train=vstack((dat_train[0:mpre,:],dat_train[npre*rep:(npre*rep+minter),]))
+    x_valid=vstack((dat_train[mpre:npre*rep,:],dat_train[(npre*rep+minter):(npre*rep+ninter),]))
     y_train=hstack((ones(mpre),zeros(minter)))
-    y_valid=hstack((ones(npre-mpre),zeros(ninter-minter)))
+    y_valid=hstack((ones(npre*rep-mpre),zeros(ninter-minter)))
     x_test=dat_test
     y_test=zeros(x_test.shape[0])
     return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
