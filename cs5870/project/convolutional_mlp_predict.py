@@ -183,8 +183,11 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # filtering reduces the image size to (28-5+1 , 28-5+1) = (24, 24)
     # maxpooling reduces this further to (24/2, 24/2) = (12, 12)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 12, 12)
-    
-    nb = 2 # neighborhood was original 5, now 2
+	
+    # filtering reduces the image size to (16-1+1 , 16-1+1) = (16, 16)
+    # maxpooling reduces this further to (16/2, 16/2) = (8, 8)
+    # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
+    nb = 1 # neighborhood was original 5, now 1
     layer0 = LeNetConvPoolLayer(
         rng,
         input=layer0_input,
@@ -194,7 +197,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     )
 
     # Construct the second convolutional pooling layer
-    # filtering reduces the image size to (12-5+1, 12-5+1) = (8, 8)
+    # filtering reduces the image size to (8-1+1, 8-1+1) = (8, 8)
     # maxpooling reduces this further to (8/2, 8/2) = (4, 4)
     # 4D output tensor is thus of shape (nkerns[0], nkerns[1], 4, 4)
     layer1 = LeNetConvPoolLayer(
