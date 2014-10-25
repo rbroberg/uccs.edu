@@ -34,7 +34,7 @@ def load_data(case,npre,ninter,ntest,features, split):
         i=npre*n;j=npre*(n+1)
         dat_pre[i:j,:]=dat_train[0:npre,:]
     dat_train=vstack((dat_pre,dat_train[npre:,:]))
-    #TODO: randomize draw
+    #randomize draw
     ipre=[i for i in range(dat_train.shape[0])]
     numpy.random.shuffle(ipre)
     idx=int(dat_train.shape[0]*split)
