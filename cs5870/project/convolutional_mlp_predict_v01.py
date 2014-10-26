@@ -35,7 +35,7 @@ from theano.tensor.nnet import conv
 from logistic_sgd import LogisticRegression, load_data
 from mlp import HiddenLayer
 
-from lenet_util import load_data, reshape_crosscorr
+from lenet_util_v01 import load_data, reshape_crosscorr
 
 cases=[ ["Dog_1",     24,  480,  502],
         ["Dog_2",     42,  500, 1000],
