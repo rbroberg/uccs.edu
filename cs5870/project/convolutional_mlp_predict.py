@@ -35,7 +35,7 @@ from theano.tensor.nnet import conv
 from logistic_sgd import LogisticRegression, load_data
 from mlp import HiddenLayer
 
-from lenet_util import load_data, reshape_crosscorr
+from lenet_util import load_data_cct, reshape_crosscorr
 
 cases=[ ["Dog_1",     24,  480,  502],
         ["Dog_2",     42,  500, 1000],
@@ -128,7 +128,7 @@ class LeNetConvPoolLayer(object):
 
 
 # TODO: batch_size seems ill-suited for variable sized data sets
-def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
+def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
                     casenum=0,
                     nkerns=[20, 50], batch_size=12, split=0.5):
     """ lenet on UPenn EEG dataset
@@ -164,7 +164,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
 
     rng = numpy.random.RandomState(23455)
     
-    datasets = load_data_cct(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cc"],split)
+    datasets = load_data_cct(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cctime"],split)
     
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -205,6 +205,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
     # filtering reduces the image size to (16-1+1 , 16-1+1) = (16, 16)
     # maxpooling reduces this further to (16/2, 16/2) = (8, 8)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
+    print(d)
     if d==16:
        nb1=1;nb2=1;d2=8;d3=4
     elif d==15:
@@ -212,7 +213,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
     elif d==24:
        nb1=1;nb2=1;d2=12;d3=6
     elif d==120:
-       nb1=23;nb2=13;d2=48;d3=18
+       nb1=25;nb2=13;d2=48;d3=18
         
     layer0 = LeNetConvPoolLayer(
         rng,
