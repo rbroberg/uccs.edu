@@ -125,9 +125,9 @@ class LeNetConvPoolLayer(object):
 
 
 # TODO: batch_size seems ill-suited for variable sized data sets
-def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
+def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
                     casenum=0,
-                    nkerns=[20, 50], batch_size=12, split=0.7):
+                    nkerns=[20, 50], batch_size=12, split=0.5):
     """ lenet on UPenn EEG dataset
 
     :type learning_rate: float
@@ -392,16 +392,18 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     return(p)
 
 if __name__ == '__main__':
-    f1=open('testfile', 'w')
+    f1=open('testfile.csv', 'w')
     f1.write(",".join(["clip","preictal"])+'\n')
     for c in range(len(cases)):
         print(">>>>>>> "+cases[c][0]+" <<<<<<<<\n");
         p=evaluate_lenet5(casenum=c)
         for n in range(cases[c][3]):
             if n < len(p):
-                f1.write(",".join(["_".join([cases[c][0],"test",str(n+1).zfill(4)+".mat"]),str(p[n])])+'\n')
+                if p[n]>1:
+                    p[n]=1
+                f1.write(",".join(["_".join([cases[c][0],"test_segment",str(n+1).zfill(4)+".mat"]),str(p[n])])+'\n')
             else:
-                f1.write(",".join(["_".join([cases[c][0],"test",str(n+1).zfill(4)+".mat"]),str(0.00123)])+'\n')
+                f1.write(",".join(["_".join([cases[c][0],"test_segment",str(n+1).zfill(4)+".mat"]),str(0.00123)])+'\n')
     f1.close()
 
 def experiment(state, channel):
