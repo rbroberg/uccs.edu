@@ -37,15 +37,15 @@ from mlp import HiddenLayer
 
 from lenet_util import load_data_cct, reshape_crosscorr
 
-cases=[ ["Dog_1",     24,  480,  502],
-        ["Dog_2",     42,  500, 1000],
-        ["Dog_3",     72, 1440,  907],
-        ["Dog_4",     97,  804,  990],
-        ["Dog_5",     30,  450,  191],
-        ["Patient_1", 18,   50,  195],
-        ["Patient_2", 18,   42,  150]];
+cases=[ ["Dog_1",     24,  480,  502, 4, 3],
+        ["Dog_2",     42,  500, 1000, 8, 5],
+        ["Dog_3",     72, 1440,  907, 12, 8],
+        ["Dog_4",     97,  804,  990, 16, 11],
+        ["Dog_5",     30,  450,  191, 5, 3],
+        ["Patient_1", 18,   50,  195, 3, 2],
+        ["Patient_2", 18,   42,  150, 3, 2]];
 
-cases = [ ["Dog_1",     24,  480,  502] ]
+cases = [ ["Dog_1",     24,  480,  502, 4, 3] ]
 
 # previously extracted features, only partially scaled
 # features=["ac","var","ent","ent2","skew","kurt"]
@@ -148,23 +148,25 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     """
     
     '''
-    case=cases[0][0]
-    npre=cases[0][1]
-    ninter=cases[0][2]
-    ntest=cases[0][3]
-    features=["cctime"]
-    split=0.7
-    learning_rate=0.1
-    n_epochs=84
-    casenum=0
-    nkerns=[20, 50]
-    batch_size=6
-    split=0.7 
+	case=cases[0][0]
+	npre=cases[0][1]
+	ninter=cases[0][2]
+	ntest=cases[0][3]
+	sn=cases[0][4] # number of preictal series of 6 files
+	sm=cases[0][5] # number of series to include in training
+	features=["cctime"]
+	split=0.7
+	learning_rate=0.1
+	n_epochs=84
+	casenum=0
+	nkerns=[20, 50]
+	batch_size=6
+	split=0.7 
     '''
 
     rng = numpy.random.RandomState(23455)
     
-    datasets = load_data_cct(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cctime"],split)
+    datasets = load_data_cct(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cctime"],cases[casenum][4], cases[casenum][5])
     
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -218,8 +220,8 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     layer0 = LeNetConvPoolLayer(
         rng,
         input=layer0_input,
-        image_shape=(batch_size, 1, d, d),
-        filter_shape=(nkerns[0], 1, nb1, nb1),
+        image_shape=(batch_size, 1, 1, d),
+        filter_shape=(nkerns[0], 1, 1, nb1),
         poolsize=(2, 2)
     )
     
@@ -230,8 +232,8 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     layer1 = LeNetConvPoolLayer(
         rng,
         input=layer0.output,
-        image_shape=(batch_size, nkerns[0], d2, d2),
-        filter_shape=(nkerns[1], nkerns[0], nb2, nb2),
+        image_shape=(batch_size, nkerns[0], d, d2),
+        filter_shape=(nkerns[1], nkerns[0], 1, nb2),
         poolsize=(2, 2)
     )
     
@@ -245,7 +247,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     layer2 = HiddenLayer(
         rng,
         input=layer2_input,
-        n_in=nkerns[1] * d3 * d3,
+        n_in=nkerns[1] * d * d3,
         n_out=batch_size,
         activation=T.tanh
     )
