@@ -55,7 +55,7 @@ def load_data(case,npre,ninter,ntest,features, split):
 
 def reshape_crosscorr(diag):
     d=len(diag)
-    n=(int(round((240.*4.)**0.5))+1)/2 # form of soln for quad eqn
+    n=(int(round((d*2.*4.)**0.5))+1)/2 # form of soln for quad eqn
     m=ones((n,n))
     k=0
     for i in range(n):
