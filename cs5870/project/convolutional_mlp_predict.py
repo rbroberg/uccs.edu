@@ -202,12 +202,18 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     # filtering reduces the image size to (16-1+1 , 16-1+1) = (16, 16)
     # maxpooling reduces this further to (16/2, 16/2) = (8, 8)
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
-    nb = 1 # neighborhood was original 5, now 1
+    if d==16:
+       nb1=1;nb2=1;d2=8;d3=4
+    elif d==15:
+       nb1=2;nb2=2;d2=7;d3=3
+    elif d==24:
+       nb1=1;nb2=1;d2=12;d3=6
+        
     layer0 = LeNetConvPoolLayer(
         rng,
         input=layer0_input,
-        image_shape=(batch_size, 1, 16, 16),
-        filter_shape=(nkerns[0], 1, nb, nb),
+        image_shape=(batch_size, 1, d, d),
+        filter_shape=(nkerns[0], 1, nb1, nb1),
         poolsize=(2, 2)
     )
     
@@ -218,8 +224,8 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     layer1 = LeNetConvPoolLayer(
         rng,
         input=layer0.output,
-        image_shape=(batch_size, nkerns[0], 8, 8),
-        filter_shape=(nkerns[1], nkerns[0], nb, nb),
+        image_shape=(batch_size, nkerns[0], d2, d2),
+        filter_shape=(nkerns[1], nkerns[0], nb2, nb2),
         poolsize=(2, 2)
     )
     
@@ -233,7 +239,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=20,
     layer2 = HiddenLayer(
         rng,
         input=layer2_input,
-        n_in=nkerns[1] * 4 * 4,
+        n_in=nkerns[1] * d3 * d3,
         n_out=batch_size,
         activation=T.tanh
     )
@@ -389,6 +395,7 @@ if __name__ == '__main__':
     f1=open('testfile', 'w')
     f1.write(",".join(["clip","preictal"])+'\n')
     for c in range(len(cases)):
+        print(">>>>>>> "+cases[c][0]+" <<<<<<<<\n");
         p=evaluate_lenet5(casenum=c)
         for n in range(cases[c][3]):
             if n < len(p):
