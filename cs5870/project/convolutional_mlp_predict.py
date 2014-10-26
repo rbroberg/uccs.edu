@@ -45,9 +45,12 @@ cases=[ ["Dog_1",     24,  480,  502],
         ["Patient_1", 18,   50,  195],
         ["Patient_2", 18,   42,  150]];
 
+cases = [ ["Dog_1",     24,  480,  502] ]
+
 # previously extracted features, only partially scaled
-features=["ac","var","ent","ent2","skew","kurt"]
-#features=["cc"] # cross correlation has length (n^2-n)/2 where n = number of channels
+# features=["ac","var","ent","ent2","skew","kurt"]
+# features=["cc"] # cross correlation has length (n^2-n)/2 where n = number of channels
+features=["cct"]
 
 class LeNetConvPoolLayer(object):
     """Pool Layer of a convolutional network """
@@ -149,19 +152,19 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
     npre=cases[0][1]
     ninter=cases[0][2]
     ntest=cases[0][3]
-    features=["cc"]
+    features=["cctime"]
     split=0.7
     learning_rate=0.1
     n_epochs=84
-    casenum=0,
+    casenum=0
     nkerns=[20, 50]
-    batch_size=12
+    batch_size=6
     split=0.7 
     '''
 
     rng = numpy.random.RandomState(23455)
     
-    datasets = load_data(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cc"],split)
+    datasets = load_data_cct(cases[casenum][0],cases[casenum][1],cases[casenum][2],cases[casenum][3],["cc"],split)
     
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -208,6 +211,8 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=100,
        nb1=2;nb2=2;d2=7;d3=3
     elif d==24:
        nb1=1;nb2=1;d2=12;d3=6
+    elif d==120:
+       nb1=23;nb2=13;d2=48;d3=18
         
     layer0 = LeNetConvPoolLayer(
         rng,

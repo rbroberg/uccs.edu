@@ -5,7 +5,44 @@ import numpy.random
 
 # since the data has a native class ratio of about 20:1
 # increase the number of preictal cases
-def load_data(case,npre,ninter,ntest,features, split):
+# designed to take time series of cc
+
+# change to binary classes (-1,1)
+
+def load_data_cct(case,npre,ninter,ntest,features, split):
+    datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
+    f=datadir+case+"/"+features[0]+".csv"
+    dat=genfromtxt(f, delimiter=',')
+    
+    dat_train=dat[0:(npre+ninter),:]
+    dat_test=dat[(npre+ninter):,:]
+    dat_labels=hstack((ones(npre),zeros(ninter)))
+    
+    # pad the preictal datasets to balance number of ictal
+    # add gaussian white noise
+    rep=ninter/npre # int
+    dat_pre=zeros((rep*npre,dat_train.shape[1]))
+    for n in range(rep):
+        i=npre*n;j=npre*(n+1)
+        rv=numpy.random.normal(0,.1,dat_train.shape[1])
+        dat_pre[i:j,:]=dat_train[0:npre,:]+rv
+    
+    dat_train=vstack((dat_pre,dat_train[npre:,:]))
+    #randomize draw
+    ipre=[i for i in range(dat_train.shape[0])]
+    numpy.random.shuffle(ipre)
+    idx=int(dat_train.shape[0]*split)
+    x_train=dat_train[ipre[0:idx],:]
+    x_valid=dat_train[ipre[idx:],:]
+    dat_y=hstack((ones(npre*rep),-1*ones(ninter)))
+    y_train=dat_y[ipre[0:idx]]
+    y_valid=dat_y[ipre[idx:]]
+    x_test=dat_test
+    y_test=-1*ones(x_test.shape[0])
+    return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
+
+# designed to take vector of unique cc values and expand into square matrix
+def load_data_cc(case,npre,ninter,ntest,features, split):
     datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
     f=datadir+case+"/"+features[0]+".csv"
     dat=genfromtxt(f, delimiter=',')
@@ -44,13 +81,11 @@ def load_data(case,npre,ninter,ntest,features, split):
     idx=int(dat_train.shape[0]*split)
     x_train=dat_train[ipre[0:idx],:]
     x_valid=dat_train[ipre[idx:],:]
-    dat_y=hstack((ones(npre*rep),zeros(ninter)))
+    dat_y=hstack((ones(npre*rep),-1*ones(ninter)))
     y_train=dat_y[ipre[0:idx]]
     y_valid=dat_y[ipre[idx:]]
     x_test=dat_test
-    y_test=zeros(x_test.shape[0])
-    x_test=dat_test
-    y_test=zeros(x_test.shape[0])
+    y_test=-1*ones(x_test.shape[0])
     return [(shared(x_train), T.cast(y_train,'int32')), (shared(x_valid), T.cast(y_valid,'int32')), (shared(x_test),T.cast(y_test,'int32'))]
 
 def reshape_crosscorr(diag):
