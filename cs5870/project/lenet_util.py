@@ -29,11 +29,13 @@ def load_data(case,npre,ninter,ntest,features, split):
             dat_test=hstack((dat_test,dat[(npre+ninter):,:]))
     
     # pad the preictal datasets to balance number of ictal
+    # add gaussian white noise
     rep=ninter/npre # int
     dat_pre=zeros((rep*npre,dat_train.shape[1]))
     for n in range(rep):
         i=npre*n;j=npre*(n+1)
-        dat_pre[i:j,:]=dat_train[0:npre,:]
+        rv=numpy.random.normal(0,.1,dat_train.shape[1])
+        dat_pre[i:j,:]=dat_train[0:npre,:]+rv
     
     dat_train=vstack((dat_pre,dat_train[npre:,:]))
     #randomize draw
