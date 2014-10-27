@@ -2,6 +2,7 @@ from numpy import genfromtxt,vstack, hstack, zeros, ones
 from theano import shared
 import theano.tensor as T
 import numpy.random
+import os
 
 # since the data has a native class ratio of about 20:1
 # increase the number of preictal cases
@@ -11,9 +12,13 @@ import numpy.random
 # sm=number of preictal test cases series to include in training
 
 def load_data_cct(case,npre,ninter,ntest,features, sn, sm):
-    datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
+    datadir="/projects/uccs.edu/cs5870/data/"
     f=datadir+case+"/"+features[0]+".csv"
+    if not os.path.isfile(f):
+        datadir="/data/www.kaggle.com/c/seizure-prediction/download/"
+        f=datadir+case+"/"+features[0]+".csv"
     dat=genfromtxt(f, delimiter=',')
+    dat=abs(dat)
     
     dat_pre=dat[0:npre,:]
     dat_inter=dat[npre:(npre+ninter),:]

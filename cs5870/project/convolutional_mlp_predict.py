@@ -38,15 +38,17 @@ from mlp import HiddenLayer
 from lenet_util import load_data_cct, reshape_crosscorr
 
 cases=[ ["Dog_1",     24,  480,  502, 4, 3],
-        ["Dog_2",     42,  500, 1000, 8, 5],
-        ["Dog_3",     72, 1440,  907, 12, 8],
-        ["Dog_4",     97,  804,  990, 16, 11],
+        ["Dog_2",     42,  500, 1000, 8, 6],
+        ["Dog_3",     72, 1440,  907, 12, 9],
+        ["Dog_4",     97,  804,  990, 16, 12],
         ["Dog_5",     30,  450,  191, 5, 3],
         ["Patient_1", 18,   50,  195, 3, 2],
         ["Patient_2", 18,   42,  150, 3, 2]];
 
 cases = [ ["Dog_1",     24,  480,  502, 4, 3],
-          ["Dog_2",     42,  500, 1000, 8, 5]]
+          ["Dog_2",     42,  500, 1000, 8, 6],
+          ["Dog_3",     72, 1440,  907, 12, 9],
+          ["Dog_4",     97,  804,  990, 16, 12]]
 
 # previously extracted features, only partially scaled
 # features=["ac","var","ent","ent2","skew","kurt"]
@@ -131,7 +133,7 @@ class LeNetConvPoolLayer(object):
 # TODO: batch_size seems ill-suited for variable sized data sets
 def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
                     casenum=0,
-                    nkerns=[20, 50], batch_size=24):
+                    nkerns=[20, 50], batch_size=6):
     """ lenet on UPenn EEG dataset
 
     :type learning_rate: float
@@ -214,11 +216,11 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     elif d==24:
        nb1=1;nb2=1;d2=12;d3=6;p1=2;p2=2
     elif d==120:
-       nb1=25;nb2=13;d2=48;d3=16;p1=4;p2=2
+       nb1=25;nb2=9;d2=24;d3=8;p1=4;p2=2
     elif d==105:
-       nb1=10;nb2=13;d2=48;d3=16;p1=4;p2=2
+       nb1=10;nb2=9;d2=24;d3=8;p1=4;p2=2
     elif d==256:
-       nb1=10;nb2=13;d2=48;d3=16;p1=8;p2=2
+       nb1=65;nb2=9;d2=24;d3=8;p1=8;p2=2
         
     layer0 = LeNetConvPoolLayer(
         rng,
@@ -408,7 +410,7 @@ if __name__ == '__main__':
     for c in range(len(cases)):
         print(">>>>>>> "+cases[c][0]+" <<<<<<<<\n");
         bs=int(cases[c][3]/20) # variable batchsize based on data size
-        p=evaluate_lenet5(casenum=c,batch_size=bs)
+        p=evaluate_lenet5(casenum=c,batch_size=bs,n_epochs=2)
         for n in range(cases[c][3]):
             if n < len(p):
                 if p[n]>1:
