@@ -45,7 +45,8 @@ cases=[ ["Dog_1",     24,  480,  502, 4, 3],
         ["Patient_1", 18,   50,  195, 3, 2],
         ["Patient_2", 18,   42,  150, 3, 2]];
 
-cases = [ ["Dog_1",     24,  480,  502, 4, 3] ]
+cases = [ ["Dog_1",     24,  480,  502, 4, 3],
+          ["Dog_2",     42,  500, 1000, 8, 5]]
 
 # previously extracted features, only partially scaled
 # features=["ac","var","ent","ent2","skew","kurt"]
@@ -130,7 +131,7 @@ class LeNetConvPoolLayer(object):
 # TODO: batch_size seems ill-suited for variable sized data sets
 def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
                     casenum=0,
-                    nkerns=[20, 50], batch_size=12, split=0.5):
+                    nkerns=[20, 50], batch_size=24):
     """ lenet on UPenn EEG dataset
 
     :type learning_rate: float
@@ -155,13 +156,11 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
 	sn=cases[0][4] # number of preictal series of 6 files
 	sm=cases[0][5] # number of series to include in training
 	features=["cctime"]
-	split=0.7
 	learning_rate=0.1
 	n_epochs=84
 	casenum=0
 	nkerns=[20, 50]
 	batch_size=6
-	split=0.7 
     '''
 
     rng = numpy.random.RandomState(23455)
@@ -209,20 +208,24 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     # 4D output tensor is thus of shape (batch_size, nkerns[0], 8, 8)
     print(d)
     if d==16:
-       nb1=1;nb2=1;d2=8;d3=4
+       nb1=1;nb2=1;d2=8;d3=4;p1=2;p2=2
     elif d==15:
-       nb1=2;nb2=2;d2=7;d3=3
+       nb1=2;nb2=2;d2=7;d3=3;p1=2;p2=2
     elif d==24:
-       nb1=1;nb2=1;d2=12;d3=6
+       nb1=1;nb2=1;d2=12;d3=6;p1=2;p2=2
     elif d==120:
-       nb1=25;nb2=13;d2=48;d3=18
+       nb1=25;nb2=13;d2=48;d3=16;p1=4;p2=2
+    elif d==105:
+       nb1=10;nb2=13;d2=48;d3=16;p1=4;p2=2
+    elif d==256:
+       nb1=10;nb2=13;d2=48;d3=16;p1=8;p2=2
         
     layer0 = LeNetConvPoolLayer(
         rng,
         input=layer0_input,
-        image_shape=(batch_size, 1, 1, d),
+        image_shape=(batch_size, 1, d, d),
         filter_shape=(nkerns[0], 1, 1, nb1),
-        poolsize=(2, 2)
+        poolsize=(1, p1)
     )
     
     # Construct the second convolutional pooling layer
@@ -234,7 +237,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
         input=layer0.output,
         image_shape=(batch_size, nkerns[0], d, d2),
         filter_shape=(nkerns[1], nkerns[0], 1, nb2),
-        poolsize=(2, 2)
+        poolsize=(1, p2)
     )
     
     # the HiddenLayer being fully-connected, it operates on 2D matrices of
@@ -253,7 +256,7 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=10,
     )
     
     # classify the values of the fully-connected sigmoidal layer
-    layer3 = LogisticRegression(input=layer2.output, n_in=batch_size, n_out=10)
+    layer3 = LogisticRegression(input=layer2.output, n_in=batch_size, n_out=2)
     
     # the cost we minimize during training is the NLL of the model
     cost = layer3.negative_log_likelihood(y)
@@ -404,7 +407,8 @@ if __name__ == '__main__':
     f1.write(",".join(["clip","preictal"])+'\n')
     for c in range(len(cases)):
         print(">>>>>>> "+cases[c][0]+" <<<<<<<<\n");
-        p=evaluate_lenet5(casenum=c)
+        bs=int(cases[c][3]/20) # variable batchsize based on data size
+        p=evaluate_lenet5(casenum=c,batch_size=bs)
         for n in range(cases[c][3]):
             if n < len(p):
                 if p[n]>1:
