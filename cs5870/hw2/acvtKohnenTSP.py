@@ -4,9 +4,11 @@ from math import sin, cos, pi, e
 import numpy.random as rnd
 import sys
 
-def calcDist(narr):
+def calcDist(narr_scaled,cmean,cradius):
+    #narr_scaled=(narr-cmean)/cradius
+    narr=narr_scaled*cradius + cmean
     l=narr.shape[0]-1
-    return np.sum(np.sum((narr[0:l]-narr[1:,])**2,axis=1))
+    return np.sum(np.sum((narr[0:l]-narr[1:,])**2,axis=1)**0.5)
 
 
 class mapNode:
@@ -20,6 +22,7 @@ class mapNode:
     def __repr__(self):
         return('('+str(self.x)+','+str(self.y)+')')
     
+    
     def pos(self):
         return(np.array([self.x,self.y]).astype(float))
 
@@ -28,8 +31,12 @@ class mapNode:
 #x.pos()
 
 datadir = "/projects/uccs.edu/cs5870/data/"
-ftour=datadir+"ulysses16.tsp.csv"
-fsoln=datadir+"ulysses16.opt.tour.csv"
+#ftour=datadir+"ulysses16.tsp.csv"
+#fsoln=datadir+"ulysses16.opt.tour.csv"
+#ftour=datadir+"berlin52.tsp.csv"
+#fsoln=datadir+"berlin52.opt.tour.csv"
+ftour=datadir+"kroA100.tsp.csv"
+fsoln=datadir+"kroA100.opt.tour.csv"
 
 # read tour locations, drop index
 tour = np.genfromtxt(ftour, delimiter=',')
@@ -62,6 +69,7 @@ tournorm=(tour-cmean)/cradius
 
 # number of runs
 runs=20
+epochs=800
 results=[]
 seeds=[]
 dists=[]
@@ -69,7 +77,7 @@ dists=[]
 for run in range(runs):
     # gain and gain factor
     G=1.0
-    alpha=0.02
+    alpha=0.05
     
     # create randomized list of the cities, same list used each epoch
     rndidx=[i for i in range(ncity)]
@@ -87,7 +95,7 @@ for run in range(runs):
     ring=[n]
     
     # one epoch is one loop through pre-randomized city index   
-    for e in range(800):
+    for e in range(epochs):
         for ri in rndidx:
             # for each node j, compute potential, find nearest node to city
             cpos=tournorm[ri,]
@@ -148,7 +156,7 @@ for run in range(runs):
         somnorm[i]=ring[i].pos()
     
     somnorm[i+1]=ring[0].pos()
-    dists.append(calcDist(somnorm))
+    dists.append(calcDist(somnorm,cmean,cradius))
     results.append(somnorm)
     seeds.append(rseed)
     print(dists[-1], G, len(ring), rseed)
@@ -173,20 +181,79 @@ for i in range(len(pathidx)):
     solnnorm[i,:]=tournorm[(pathidx[i]-1),:]
 
 solnnorm[i+1,:]=tournorm[(pathidx[0]-1),:]
-soln_d=calcDist(solnnorm)
+soln_d=calcDist(solnnorm,cmean,cradius)
 
+# rescale
+tournorm=tournorm*cradius + cmean
+solnnorm=solnnorm*cradius + cmean
+somnorm=somnorm*cradius + cmean
+
+
+'''
+# best 7411 (Euclidean, not GEO)
 plt.plot(tournorm[:,0],tournorm[:,1],'ro')
 plt.plot(solnnorm[:,0],solnnorm[:,1],'r-',linewidth=3.0)
 plt.plot(somnorm[:,0],somnorm[:,1],'bo')
 plt.plot(somnorm[:,0],somnorm[:,1],'b-')
-plt.text(-0.25, 0.55,"best distance: "+str(soln_d))
-plt.text(-0.25, 0.45,"this distance: "+str(som_d))
-plt.show()
-
+plt.text(33.5, 28,"best (red) : "+str(soln_d))
+plt.text(33.5, 24,"this (blue): "+str(som_d))
+plt.text(33.5, 20,"rseed : "+str(seeds[ni]))
+plt.title("Ulysses 16 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs")
+#plt.show()
+plt.savefig("img/ulysses16_"+str(rseed)+"_"+str(som_d)+".png")
+plt.close()
 
 plt.hist(dists)
-plt.axvline(soln_d)
-plt.show()
+plt.axvline(soln_d,color="red",linewidth=3.0)
+plt.title("Ulysses 16 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs, alpha = " +str(alpha))
+plt.text(72.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
+#plt.show()
+plt.savefig("img/ulysses16_"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
+plt.close()
+'''
+
+'''
+# best 7544 (7542)
+plt.plot(tournorm[:,0],tournorm[:,1],'ro')
+plt.plot(solnnorm[:,0],solnnorm[:,1],'r-',linewidth=3.0)
+plt.plot(somnorm[:,0],somnorm[:,1],'bo')
+plt.plot(somnorm[:,0],somnorm[:,1],'b-')
+plt.text(33.5, 1128,"best (red) : "+str(soln_d))
+plt.text(33.5, 1024,"this (blue): "+str(som_d))
+plt.text(33.5,  920,"rseed : "+str(seeds[ni]))
+plt.title("Berlin 52 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs")
+#plt.show()
+plt.savefig("img/berlin52_"+str(rseed)+"_"+str(som_d)+".png")
+plt.close()
+
+plt.hist(dists)
+plt.axvline(soln_d,color="red",linewidth=3.0)
+plt.title("Berlin 52 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs, alpha = " +str(alpha))
+plt.text(7200.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
+#plt.show()
+plt.savefig("img/berlin52_"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
+plt.close()
+'''
 
 
+# best 21285 (21282)
+plt.plot(tournorm[:,0],tournorm[:,1],'ro')
+plt.plot(solnnorm[:,0],solnnorm[:,1],'r-',linewidth=3.0)
+plt.plot(somnorm[:,0],somnorm[:,1],'bo')
+plt.plot(somnorm[:,0],somnorm[:,1],'b-')
+plt.text(50.5, 1950,"best (red) : "+str(soln_d))
+plt.text(50.5, 1900,"this (blue): "+str(som_d))
+plt.text(50.5, 1850,"rseed : "+str(seeds[ni]))
+plt.title("KRO A 100 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs")
+#plt.show()
+plt.savefig("img/kroA100"+str(rseed)+"_"+str(som_d)+".png")
+plt.close()
+
+plt.hist(dists)
+plt.axvline(soln_d,color="red",linewidth=3.0)
+plt.title("KRO A 100 Best -v- SOM\n"+str(runs)+" runs of "+str(epochs)+" epochs, alpha = " +str(alpha))
+plt.text(21000.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
+#plt.show()
+plt.savefig("img/kroA100"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
+plt.close()
 
