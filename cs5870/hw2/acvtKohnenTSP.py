@@ -31,12 +31,12 @@ class mapNode:
 #x.pos()
 
 datadir = "/projects/uccs.edu/cs5870/data/"
-#ftour=datadir+"ulysses16.tsp.csv"
-#fsoln=datadir+"ulysses16.opt.tour.csv"
+ftour=datadir+"ulysses16.tsp.csv"
+fsoln=datadir+"ulysses16.opt.tour.csv"
 #ftour=datadir+"berlin52.tsp.csv"
 #fsoln=datadir+"berlin52.opt.tour.csv"
-ftour=datadir+"kroA100.tsp.csv"
-fsoln=datadir+"kroA100.opt.tour.csv"
+#ftour=datadir+"kroA100.tsp.csv"
+#fsoln=datadir+"kroA100.opt.tour.csv"
 
 # read tour locations, drop index
 tour = np.genfromtxt(ftour, delimiter=',')
@@ -61,14 +61,14 @@ sqrt2inv = 1/(2.)**0.5
 # center of tour
 cmean=tour.mean(axis=0)
 
-# manhatten distance of cities from center
+# manhattan distance of cities from center
 cradius=np.max(np.abs(np.sum(tour - cmean, axis=1)))
 
 # normalize data to a -1x1 box, center and scale
 tournorm=(tour-cmean)/cradius
 
 # number of runs
-runs=20
+runs=40
 epochs=800
 results=[]
 seeds=[]
@@ -77,7 +77,7 @@ dists=[]
 for run in range(runs):
     # gain and gain factor
     G=1.0
-    alpha=0.05
+    alpha=0.005
     
     # create randomized list of the cities, same list used each epoch
     rndidx=[i for i in range(ncity)]
@@ -151,6 +151,27 @@ for run in range(runs):
                 # clear winning city list
                 ring[ni].cities=[]
     
+        '''
+        # flip random pair
+        if len(ring) > nnodes-2:
+            this=np.zeros((len(ring)+1,2))
+            for i in range(len(ring)):
+                this[i]=ring[i].pos()
+            this[i+1]=ring[0].pos()
+            rn=rnd.randint(len(ring)-1)
+            tryring=ring
+            tmp=tryring[rn]
+            tryring[rn]=tryring[rn+1]
+            tryring[rn+1]=tmp
+            that=np.zeros((len(tryring)+1,2))
+            for i in range(len(tryring)):
+                that[i]=tryring[i].pos()
+            that[i+1]=tryring[0].pos()
+            tmp_a=calcDist(this,cmean,cradius)
+            tmp_b=calcDist(that,cmean,cradius)
+            if tmp_b < tmp_a:
+                ring = tryring
+        '''
     somnorm=np.zeros((len(ring)+1,2))
     for i in range(len(ring)):
         somnorm[i]=ring[i].pos()
@@ -189,7 +210,7 @@ solnnorm=solnnorm*cradius + cmean
 somnorm=somnorm*cradius + cmean
 
 
-'''
+#'''
 # best 7411 (Euclidean, not GEO)
 plt.plot(tournorm[:,0],tournorm[:,1],'ro')
 plt.plot(solnnorm[:,0],solnnorm[:,1],'r-',linewidth=3.0)
@@ -210,7 +231,7 @@ plt.text(72.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
 #plt.show()
 plt.savefig("img/ulysses16_"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
 plt.close()
-'''
+#'''
 
 '''
 # best 7544 (7542)
@@ -233,9 +254,9 @@ plt.text(7200.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
 #plt.show()
 plt.savefig("img/berlin52_"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
 plt.close()
+#'''
+
 '''
-
-
 # best 21285 (21282)
 plt.plot(tournorm[:,0],tournorm[:,1],'ro')
 plt.plot(solnnorm[:,0],solnnorm[:,1],'r-',linewidth=3.0)
@@ -256,4 +277,4 @@ plt.text(21000.,0.50,"best (red) : "+str(soln_d), rotation = "90", va="bottom")
 #plt.show()
 plt.savefig("img/kroA100"+str(runs)+"_"+str(epochs)+"_"+str(som_d)+"_hist.png")
 plt.close()
-
+'''
