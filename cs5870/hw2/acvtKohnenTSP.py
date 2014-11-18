@@ -151,27 +151,6 @@ for run in range(runs):
                 # clear winning city list
                 ring[ni].cities=[]
     
-        '''
-        # flip random pair
-        if len(ring) > nnodes-2:
-            this=np.zeros((len(ring)+1,2))
-            for i in range(len(ring)):
-                this[i]=ring[i].pos()
-            this[i+1]=ring[0].pos()
-            rn=rnd.randint(len(ring)-1)
-            tryring=ring
-            tmp=tryring[rn]
-            tryring[rn]=tryring[rn+1]
-            tryring[rn+1]=tmp
-            that=np.zeros((len(tryring)+1,2))
-            for i in range(len(tryring)):
-                that[i]=tryring[i].pos()
-            that[i+1]=tryring[0].pos()
-            tmp_a=calcDist(this,cmean,cradius)
-            tmp_b=calcDist(that,cmean,cradius)
-            if tmp_b < tmp_a:
-                ring = tryring
-        '''
     somnorm=np.zeros((len(ring)+1,2))
     for i in range(len(ring)):
         somnorm[i]=ring[i].pos()
@@ -183,7 +162,9 @@ for run in range(runs):
     print(dists[-1], G, len(ring), rseed)
     sys.stdout.flush()
 
-
+print(np.median(dists))
+print(np.mean(dists))
+print(np.std(dists))
 
 # ===============================
 # print fig of least path
