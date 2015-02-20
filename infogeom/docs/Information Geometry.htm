@@ -1,0 +1,483 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=387;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+
+<link href="/web/20120918133713cs_/http://bactra.org/plain-style.css" rel="stylesheet" type="text/css">
+
+<title>Information Geometry</title>
+
+
+<!-- Access to MathJax through their server !-->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript"
+src="/web/20120918133713js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+</head>
+
+<body>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript" src="/static/jflot/jquery.min.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "http://masi.cscs.lsa.umich.edu/~crshalizi/notebooks/info-geo.html";
+
+var firstYear = 1996;
+var imgWidth = 500,imgHeight = 27;
+var yearImgWidth = 25,monthImgWidth = 2;
+var displayDay = "18";
+var displayMonth = "Sep";
+var displayYear = "2012";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function getElementX2(obj) {
+  var $e=jQuery(obj);
+  return (typeof $e=="undefined"||typeof $e.offset=="undefined")?
+    getElementX(obj):Math.round($e.offset().left);
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX2(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})();//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://masi.cscs.lsa.umich.edu/~crshalizi/notebooks/info-geo.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20120918133713" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Aug
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 13:37:13 Sep 18, 2012">SEP</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Oct
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 13:37:13 Sep 18, 2012">18</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20121002023610/http://masi.cscs.lsa.umich.edu/~crshalizi/notebooks/info-geo.html" title="2:36:10 Oct 2, 2012"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2011
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 13:37:13 Sep 18, 2012">2012</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2013
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20120918133713*/http://masi.cscs.lsa.umich.edu/~crshalizi/notebooks/info-geo.html" title="See a list of every capture for this URL">2 captures</a>
+           <div class="r" title="Timespan for captures of this URL">18 Sep 12 - 2 Oct 12</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="500"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=500_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:8:000000001100_2013:-1:000000000000_2014:-1:000000000000_2015:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+
+<P>
+
+<P></P><cite><a href="/web/20120918133713/http://bactra.org/notebooks">Notebooks</a></cite>
+
+<div class="text">
+<div class="left">
+<h2>Information Geometry</h2>
+
+<i>13 Aug 2012 20:50</i>
+
+<hr>
+
+<P>
+
+
+<P>This a slightly misleading name for applying <a
+href="/web/20120918133713/http://masi.cscs.lsa.umich.edu/~crshalizi/reviews/geometrical-methods/">differential geometry</a> to families of
+<a href="probability.html">probability distributions</a>, and so to <a
+href="statistics.html">statistical models</a>.  Information does however play
+two roles in it: Kullback-Leibler information, or <a
+href="information-theory.html">relative entropy</a>, features as a measure of
+divergence (not quite a metric, because it's asymmetric), and Fisher
+information takes the role of curvature.  One very nice thing about information
+geometry is that it gives us very strong tools for proving results about
+statistical models, simply by considering them as well-behaved geometrical
+objects.  Thus, for instance, it's basically a tautology to say that a manifold
+is not changing much in the vicinity of points of low curvature, and changing
+greatly near points of high curvature.  Stated more precisely, and then
+translated back into probabilistic language, this becomes the Cramer-Rao
+inequality, that the variance of a parameter estimator is at least the
+reciprocal of the Fisher information.  As someone who likes differential
+geometry, and now is interested in statistics, I find this very pleasing.
+
+<P>As a physicist, I have always been somewhat bothered by the way
+statisticians seem to accept <em>particular</em> parametrizations of their
+models as obvious and natural, and build those parameterization into their
+procedures.  In linear regression, for instance, it's reasonably common for
+them to want to find models with only a few non-zero coefficients.  This makes
+my thumbs prick, because it seems to me obvious that if I regressed on
+arbitrary linear combinations of my covariates, I have exactly the same
+information (provided the transformation is invertible), and so I'm really
+looking at exactly the same model --- but in general I'm <em>not</em> going to
+have a small number of non-zero coefficients any more.  In other words, I want
+to be able to do <em>coordinate-free</em> statistics.  Since differential
+geometry lets me do coordinate-free physics, information geometry seems like an
+appealing way to do this.  There are various information-geometric model
+selection criteria, which I want to know more about; I suspect, based purely on
+this disciplinary prejudice, that they will out-perform coordinate-dependent
+criteria.
+
+<P>I should also mention that <a href="stat-mech.html">statistical physics</a>,
+while it does no actual <em>statistics</em>, is also very much concerned with
+probability distributions.  Sun-Ichi Amari, who is the leader of a large and
+impressive Japanese school of information-geometers, has a nice result (in,
+e.g., his "Hierarchy of Probability Distributions" paper) showing
+that <a href="max-ent.html">maximum entropy distributions</a> are, exactly, the
+ones with minimal interaction between their variables --- the ones which
+approach most closely to independence.  I think this throws a very interesting
+new light on the issue of <em>why</em> we can assume equilibrium corresponds to
+a state of <a href="max-ent.html">maximum entropy</a> (<em>pace</em> Jaynes,
+assuming independence is clearly not an innocent way of saying "I really don't
+know anything more").  I also see, via the Arxiv, that people are starting to
+think about phase transitions in information-geometric terms, which seems
+natural in retrospect, though I can't comment further, not having read the
+papers.
+
+<P>See also:
+	<a href="exponential-families.html">Exponential Families of Probability Measures</a>, where the geometry is especially nice;
+	<a href="filtering.html">Filtering and State Estimation</a> for
+some papers on differential-geometric ideas in statistical state estimation and
+signal processing;
+	<a href="partial-identification.html">Partial Identification
+of Parametric Statistical Models</a>
+
+<ul>Recommended, big picture:
+	<li>S.-I. Amari, O. E. Barndorff-Nielsen, R. E. Kass, S. L. Lauritzen,
+and C. R. Rao, <cite>Differential Geometry in Statistical
+Inference</cite> [Now <a href="/web/20120918133713/http://projecteuclid.org/euclid.lnms/1215467056">free online</a>]
+	<li>Sun-Ichi Amari and Hiroshi Nagaoka, <cite>Methods of Information
+Geometry</cite>
+	<li><a href="/web/20120918133713/http://www.stat.cmu.edu/~kass/">Robert E. Kass</a> and Paul W. Vos, <cite>Geometrical Foundations of
+Asymptotic Inference</cite>
+	<li>Rudolf Kulhav&yacute;, <cite>Recursive Nonlinear Estimation: A
+Geometric Approach</cite>
+	</ul>
+
+<ul>Recommended, close-ups:
+	<li>Sun-Ichi Amari, "Information Geometry on Hierarchy of Probability
+Distributions", <cite>IEEE Transacttions on Information
+Theory</cite> <strong>47</strong> (2001): 1701--1711
+[<a
+href="/web/20120918133713/http://people.csail.mit.edu/jrennie/trg/papers/amari-ig-hierarchy-01.pdf">PDF
+reprint</a>]
+	<li>Vijay Balasubramanian, "Statistical Inference, Occam's Razor, and
+Statistical Mechanics on the Space of Probability Distributions",
+<cite>Neural Computation</cite> <strong>9</strong> (1997): 349--368
+	<li>Hwan-sik Choi and Nicholas M. Kiefer, "Differential Geometry and
+Bias Correction in Nonnested Hypothesis Testing"
+[<a href="/web/20120918133713/http://www.arts.cornell.edu/econ/kiefer/GeometryMS6.pdf">PDF preprint
+via Kiefer</a>]
+	<li>Tommi S. Jaakkola and David Haussler, "Exploiting generative models
+in discriminative classifiers", <cite>NIPS 11</cite> (1998)
+[<a href="/web/20120918133713/http://books.nips.cc/papers/files/nips11/0487.pdf">PDF</a>]
+	<li>I. J. Myung, Vijay Balasubramanian and M. A. Pitt, "Counting
+probability distributions: Differential geometry and model selection",
+<a
+href="/web/20120918133713/http://dx.doi.org/10.1073/pnas.170283897"><cite>Proceedings of the National Academy of Sciences</cite> (USA) <strong>97</strong>
+(2000): 11170--11175</a>
+	</ul>
+
+<ul>To read:
+	<li>Khadiga Arwini and C. T. J. Dodson, "Neighborhoods of Independence
+for Random Processes", <a
+href="/web/20120918133713/http://arxiv.org/abs/math.DG/0311087">math.DG/0311087</a>
+	<li>Nihat Ay
+		<ul>
+		<li>"Information geometry on complexity and stochastic
+interaction" [<a
+href="/web/20120918133713/http://www.mis.mpg.de/preprints/2001/prepr9501-abstr.html">preprint</a>]
+		<li>"An information-geometric approach to a theory of pragmatic
+structuring" [<a
+href="/web/20120918133713/http://www.mis.mpg.de/preprints/2000/prepr5200-abstr.html">preprint</a>]
+		</ul>
+	<li>Nihat Ay, J&uuml;rgen Jost, H&ocirc;ng V&acirc;n L&ecirc;, Lorenz Schwachh&uuml;fer, "Information geometry and sufficient statistics", <a href="/web/20120918133713/http://arxiv.org/abs/1207.6736">arxiv:1207.6736</a>
+	<li>O. E. Barndorff-Nielsen and Richard D. Gill, "Fisher Information in
+Quantum Statistics", <a
+href="/web/20120918133713/http://arxiv.org/abs/quant-ph/9808009">quant-ph/9808009</a>
+	<li>Damiano Brigo, "The direct L2 geometric structure on a manifold of probability densities with applications to Filtering", <a href="/web/20120918133713/http://arxiv.org/abs/1111.6801">arxiv:1111.6801</a>
+	<li>Xavier Calmet and Jacques Calmet, "Dynamics of the Fisher
+Information Metric", <a
+href="/web/20120918133713/http://arxiv.org/abs/cond-mat/0410452">cond-mat/0410452</a> = <a
+href="/web/20120918133713/http://dx.doi.org/10.1103/PhysRevE.71.056109"><cite>Physical Review
+E</cite> <strong>71</strong> (2005): 056109</a>
+	<li>Gavin E. Crooks, "Measuring Thermodynamic Length",
+<a href="/web/20120918133713/http://dx.doi.org/10.1103/PhysRevLett.99.100602"><cite>Physical Review
+Letters</cite> <strong>99</strong> (2007): 100602</a> ["Thermodynamic length is
+a metric distance between equilibrium thermodynamic states. Among other
+interesting properties, this metric asymptotically bounds the dissipation
+induced by a finite time transformation of a thermodynamic system. It is also
+connected to the Jensen-Shannon divergence, Fisher information, and Rao's
+entropy differential metric."]
+	<li>Imre Csiszar and Frantisek Matus, "Closures of exponential
+families", <a
+href="/web/20120918133713/http://dx.doi.org/10%2E1214/009117904000000766"><cite>Annals of
+Probability</cite> <strong>33</strong> (2005): 582--600</a> = <a
+href="/web/20120918133713/http://arxiv.org/abs/math.PR/0503653">math.PR/0503653</a>
+	<li>C. T. J. Dodson and H. Wang, "Iterative Approximation of
+Statistical Distributions and Relation to Information Geometry",
+<a href="/web/20120918133713/http://dx.doi.org/10.1023/A:1012289028897"><cite>Statistical Inference
+for Stochastic Processes</cite> <strong>4</strong> (2001): 307--318</a> ["the
+optimal control of stochastic processes through sensor estimation of
+probability density functions is given a geometric setting via information
+theory and the information metric."]
+	<li>Tryphon T. Georgiou, "An intrinsic metric for power spectral
+density
+functions", <a href="/web/20120918133713/http://arxiv.org/abs/math.PR/0608486">math.PR/0608486</a>
+[Leads to a Riemannian geometry on stochastic processes, apparently...]
+	<li>Paolo Gibilisco and Tommaso Isola, "Uncertainty Principle and
+Quantum Fisher Information", <a
+href="/web/20120918133713/http://arxiv.org/abs/math-ph/0509046">math-ph/0509046</a>
+	<li>Paolo Gibilisco, Daniele Imparato and Tommaso Isola,
+"Uncertainty Principle and Quantum Fisher Information II" <a href="/web/20120918133713/http://arxiv.org/abs/math-ph/0701062">math-ph/0701062</a>
+	<li>Kazushi Ikeda, "Information Geometry of Interspike Intervals in
+Spiking Neurons", <a
+href="/web/20120918133713/http://neco.mitpress.org/cgi/content/abstract/17/12/2719"><cite>Neural
+Computation</cite> <strong>17</strong> (2005): 2719--2735</a>
+	<li>Shiro Ikeda, Toshiyuki Tanaka and Shun-ichi Amari, "Stochastic
+Reasoning, Free Energy, and Information Geometry", <a
+href="/web/20120918133713/http://neco.mitpress.org/cgi/content/abstract/16/9/1779"><cite>Neural
+Computation</cite> <strong>16</strong> (2004): 1779--1810</a>
+	<li>W. Janke, D.A. Johnston and R. Kenna, "Information Geometry and
+Phase Transitions", <a
+href="/web/20120918133713/http://arxiv.org/abs/cond-mat/0401092">cond-mat/0401092</a>
+= <cite>Physica A</cite> <strong>336</strong> (2004): 181--186
+	<li>G. Lebanon, "Axiomatic Geometry of Conditional Models", <a
+href="/web/20120918133713/http://dx.doi.org/10.1109/TIT.2005.844060"><cite>IEEE Transactions on
+Information Theory</citE> <strong>51</strong> (2005): 1283--1294</a>
+	<li>M. K. Murray and J. W. Rice, <cite>Differential Geometry and
+Statistics </cite> [Thanks to <a href="/web/20120918133713/http://www.ergodicity.net/">Anand
+Sarwate</a> for the recommendation]
+	<li>Hiroyuki Nakahara and Shun-ichi Amari, "Information-Geometric
+Measure for Neural Spikes", <cite>Neural Computation</cite> <strong>14</strong>
+(2002): 2269--2316
+	<li>Frank Nielsen, "Chernoff information of exponential families",
+<a href="/web/20120918133713/http://arxiv.org/abs/1102.2684">arxiv:1102.2684</a>
+	<li>J. Pletonen and S. Kaski, "Discriminative Components of Data",
+<cite>IEEE Transactions on Neural Networks</cite> <strong>16</strong> (2005):
+68--83
+	<li>Steven T. Smith, "Covariance, Subspace, and Intrinsic Cramer-Rao
+Bounds", <a href="/web/20120918133713/http://dx.doi.org/10.1109/TSP.2005.845428"><cite>IEEE
+Transactions on Signal Processing</cite> <strong>53</strong> (2005):
+1610--1630</a> [Thanks to Dr. Smith for a reprint]
+	<li>R. F. Streater, "Quantum Orlicz spaces in information geometry",
+<a href="/web/20120918133713/http://arxiv.org/abs/math-ph/0407046">math-ph/0407046</a>
+	<li>Masanobu Taniguchi and Yoshihide Kakizawa, <cite>Asymptotic Theory
+of Statistical Inference for Time Series</cite> [The first few chapters are
+quite nice, but I haven't gotten to the parts where they actually use much
+information geometry]
+	<li>Marc Toussaint, "Notes on information geometry and evolutionary
+processes", <a href="/web/20120918133713/http://arxiv.org/abs/nlin.AO/0408040">nlin.AO/0408040</a>
+	<li>Mark K. Transtrum, Benjamin B. Machta, James P. Sethna, "The
+geometry of nonlinear least squares with applications to sloppy models and
+optimization", <a href="/web/20120918133713/http://arxiv.org/abs/1010.1449">arxiv:1010.1449</a>
+[From the abstract, this sounds like a rediscovery of Amari's 1967 paper, but
+Sethna is someone who usually know what he's doing so I reserve judgement]
+	<li>Paolo Zanardi, Paolo Giorda, and Marco Cozzini,
+"Information-Theoretic Differential Geometry of Quantum Phase
+Transitions", <a
+href="http//dx.doi.org/10.1103/PhysRevLett.99.100603"><cite>Physical Review
+Letters</cite> <strong>99</strong> (2007): 100603</a>
+	</ul>
+
+
+</p>
+
+</div>
+</div>
+
+<hr>
+
+<div class="footer"><P><a href="/web/20120918133713/http://bactra.org/notebooks/info-geo.html">permanent link for this
+note</a> &nbsp; <a href="/web/20120918133713/http://bactra.org/notebooks/info-geo.rss">RSS feed for this
+note</a></P></div>
+<div class="foot">
+
+<center>
+
+<cite><a href="/web/20120918133713/http://bactra.org/notebooks">Notebooks</a></cite>: &nbsp;
+
+<a href="/web/20120918133713/http://www.blosxom.com/"><img src="/web/20120918133713im_/http://www.raelity.org/images/pb_blosxom.gif" border="0" /></a>&nbsp;
+
+<!-- <script language="JavaScript" type="text/JavaScript" src="/web/20120918133713/http://www.reinvigorate.net/archive/app.bin/jsinclude.php?26818"></script>&nbsp; -->
+
+Hosted, but not endorsed, by the <a href="/web/20120918133713/http://cscs.umich.edu/">Center for
+the Study of Complex Systems</a> 
+
+<script type="text/javascript" src="/web/20120918133713js_/http://embed.technorati.com/embed/i3uzyqg3pm.js"></script>
+
+</center>
+
+</div>
+
+</body></html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 13:37:13 Sep 18, 2012 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:24:16 Feb 18, 2015.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
