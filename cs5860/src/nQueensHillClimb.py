@@ -237,21 +237,21 @@ def findSolution(B,ITER,nscale):
 if __name__ == "__main__":
     N=10
     ITER=100
-    runs = 10000
-	for N in [6,7,8,9.10]:
-		for s in range(1,7):
-			wins = 0
-			starts = []
-			scores = []
-			niters = []
-			for n in range(runs):
-				B=list2board(randomList(N))
-				start, score, niter, B = findSolution(B,ITER, int(s/2))
-				starts.append(int(start))
-				scores.append(int(score))
-				niters.append(int(niter))
-				if score == 0:
-					wins=wins+1
-				#print n, start, score, niter
-			print s, wins, runs, (1.*wins)/runs, np.mean(starts), np.mean(scores), np.mean(niters)
+    runs = 1000
+    for N in [6,8,10]:
+        for s in range(1,5):
+            wins = 0
+            starts = []
+            scores = []
+            niters = []
+            for n in range(runs):
+                B=list2board(randomList(N))
+                start, score, niter, B = findSolution(B,ITER, s)
+                starts.append(int(start))
+                scores.append(int(score))
+                niters.append(int(niter))
+                if score == 0:
+                    wins=wins+1
+                #print n, start, score, niter
+            print s, wins, runs, (1.*wins)/runs, np.mean(starts), np.mean(scores), np.mean(niters)
  
