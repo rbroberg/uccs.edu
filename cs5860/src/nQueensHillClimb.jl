@@ -129,6 +129,7 @@ function findSolution(B,ITER,staglen)
     [pop!(bhist) for b in 1:length(bhist)]; # clear the history list
     pieces=board2list(B);
     score_start=scoreBoard(B);
+	last = score_start+1 # for a 'no buffer' test
     # call the solution "done" when score is unchanged for N rounds
     stag=[score_start for i in 1:staglen];
     iters=0;
@@ -283,9 +284,17 @@ function findSolution(B,ITER,staglen)
         if sum([s == stag[1] for s in stag]) == length(stag)
             break
         end
-        
+		
+		# for no buffer
+		#if last == bests[1][1]
+		#	break
+		#else
+		#	last = bests[1][1]
+        #end
+		
         # pick a random best board
         ridx = rand(1:length(bests));
+        # ridx=1 # for testing only
         B = copy(bests[ridx][2]);
     end
     return score_start, int(bests[1][1]), iters,  bests[1][2]
@@ -293,7 +302,7 @@ end
 
 function main()
     ITER=100
-    runs = 1000
+    runs = 100
     flush(STDOUT)
     for N in [6,7,8,9,10]
         for s in [2,int(N/2),N,int(3*N/2),2*N]
@@ -321,30 +330,64 @@ end
 
 function same()
     ITER=100
-    runs = 100
+    runs = 1000
+	innerruns = 10
     flush(STDOUT)
-        for N in [8]
-            B=list2board(randomList(N))
-            for s in [2,int(N/2),N,int(3*N/2),2*N]
-                wins = 0
-                starts = Int64[]
-                scores = Int64[]
-                niters = Int64[]
-                for n in 1:runs
-                    start, score, niter, B2 = findSolution(B,ITER, s)
-                    push!(starts,int(start))
-                    push!(scores,int(score))
-                    push!(niters,int(niter))
-                    if score == 0
-                        wins=wins+1
-                    end
-                    #println(join([start, score, niter],'\t'))
-                    flush(STDOUT)
-                end
-                println(join([N, s, wins, runs, (1.*wins)/runs, mean(starts), mean(scores), mean(niters)],'\t'))
-                flush(STDOUT)
-            end
-        end
+    for N in [8]
+		Twins = 0
+		Tstarts = Float64[]
+		Tscores = Float64[]
+		Tniters = Float64[]
+		for m in 1:runs
+			# RL=[62, 31, 53, 47, 20, 26, 52, 33] # 10 1 12 ## 0 in 1000
+			# RL=[49, 41, 21, 33, 48, 40, 13, 23]  # 14 0 6 ## 207 in 1000
+			# RL=[49,43,20,59,25,48,27,4] # 12 1 13 ## 7 in 1000
+			# RL=[10,36,12,62,39,25,55,46] # 11 1 11 ## 85 in 1000
+			# RL=[42,26,62,52,16,4,10,39] # 6 2 9 ## 366 in 1000
+			# RL=[28,63,16,14,4,11,51,24] # 8 2 11 ## 42 in 1000
+			# RL=[38,12,46,58,59,2,11,3] # 13 2 12 ## 0 in 1000
+			# RL=[62,50,38,51,9,23,35,40] # 6 0 3 ## 1000 in 1000
+			# RL=[21,54,23,12,31,24,8,29] # 9 1 11 ## 262 in 1000
+			# RL=[0,50,62,46,42,26,60,1] # 11 2 11 ## 0 in 1000
+			# RL=[2,0,28,41,19,62,47,43] # 7 2 10 ## 452 in 1000
+			# RL=[14,51,56,57,29,36,25,28] # 12 1 12 ## 175 in 1000
+			# RL=[1,41,60,63,33,49,57,19] # 16 2 11 ## 187 in 1000
+			# B=list2board(RL)
+			B=list2board(randomList(N))
+			#println(B)
+			#for s in [2,int(N/2),N,int(3*N/2),2*N]
+			for s in [100]
+				wins = 0
+				starts = Int64[]
+				scores = Int64[]
+				niters = Int64[]
+				innie=0
+				for n in 1:innerruns
+					innie+=1
+					start, score, niter, B2 = findSolution(B,ITER, s)
+					push!(starts,int(start))
+					push!(scores,int(score))
+					push!(niters,int(niter))
+					if score == 0
+						wins=wins+1
+						Twins = Twins + 1
+						break
+					end
+					#println(join([start, score, niter],'\t'))
+					#flush(STDOUT)
+				end
+				#println(join([innie, wins, mean(starts), mean(scores), mean(niters)],'\t'))
+				#flush(STDOUT)
+				push!(Tstarts,mean(starts))
+				push!(Tscores,mean(scores))
+				push!(Tniters,mean(niters))	
+			end
+		end
+		println(join([runs, innerruns, Twins, (1.*Twins)/runs, mean(Tstarts), mean(Tscores), mean(Tniters)],'\t'))
+    end
+
+	#print(B)
+	#print(B2)
 end
 
 #main()
