@@ -22,9 +22,9 @@ for data in rdata[1:]:
  color.append(data[3]) # larceny_theft 
  area.append(data[3]**1.5) # population
  # plotting the first eigth letters of the state's name
- plt.text(data[2], data[1]*0.5, data[3],size=11,horizontalalignment='center',verticalalignment='bottom')
+ plt.text(data[2], data[1]*0.5, data[3],size=11,horizontalalignment='left',verticalalignment='bottom')
 
-plt.text(10, 500, "percent of 1000 boards solved",size=11,horizontalalignment='center',verticalalignment='bottom')
+plt.text(10, .16, "percent of 1000 boards solved",size=11,horizontalalignment='center',verticalalignment='bottom')
 
 # making the scatter plot
 #sct = scatter(x, y, c=color, s=area, linewidths=2, edgecolor='w')
@@ -42,5 +42,6 @@ ax.set_xscale('log')
 plt.xlabel('Number of neighbor searches allowed')
 plt.ylabel('Number of retries on same board')
 plt.title("Solution Space for 8-Queens Problem")
-#fig.show()
-plt.savefig("queens_space.png")
+fig.show()
+#plt.savefig("queens_space.png")
+
