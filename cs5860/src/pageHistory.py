@@ -27,7 +27,12 @@ bigrams=[':'.join([str(t[0]),str(t[1])]) for t in tflat]
 bidict={}
 
 bmarkov = {i:[] for i in bigrams} 
-
+'''
+# for 2.6
+bmarkov={}
+for i in bigrams:
+    bmarkov[i]=[]
+'''
 for t in tflat:
     a=':'.join([str(t[0]),str(t[1])])
     b=[str(t[2])]
@@ -42,6 +47,16 @@ def pageProb(newpage,pagelist):
 tuniq = list(set(map(tuple, tflat)))
 pdict = {i:[] for i in tuniq} 
 rdict = {i:[] for i in tuniq} 
+'''
+# for 2.6
+pdict={}
+for i in tuniq:
+    pdict[i]=[]
+
+rdict={}
+for i in tuniq:
+    rdict[i]=[]
+'''
 for t in tuniq:
     a=':'.join([str(t[0]),str(t[1])])
     b=str(t[2])
@@ -169,14 +184,17 @@ from sklearn import metrics
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.preprocessing import StandardScaler
 
-
+X=np.vstack((pmin,pmean,pmax,rmin,rmean,rmax,srclen.values)).transpose()
 X = StandardScaler().fit_transform(X)
 
 
-db = DBSCAN(eps=0.7, min_samples=10).fit(X)
-core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-core_samples_mask[db.core_sample_indices_] = True
-labels = db.labels_
+Y = DBSCAN(eps=0.7, min_samples=10).fit(X)
+#core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+#core_samples_mask[db.core_sample_indices_] = True
+#labels = Y.labels_
+
+for i in set(list(Y)):
+    print i, sum(Y==i)
 
 # Number of clusters in labels, ignoring noise if present.
 n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
