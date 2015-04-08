@@ -191,13 +191,14 @@ X = StandardScaler().fit_transform(X)
 Y = DBSCAN(eps=0.7, min_samples=10).fit(X)
 #core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
 #core_samples_mask[db.core_sample_indices_] = True
-#labels = Y.labels_
-
-for i in set(list(Y)):
-    print i, sum(Y==i)
+y = Y.labels_
 
 # Number of clusters in labels, ignoring noise if present.
-n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+n_clusters_ = len(set(y)) - (1 if -1 in labels else 0)
+
+for i in set(list(y)):
+    print i, sum(y==i)
+
 
 print('Estimated number of clusters: %d' % n_clusters_)
 #print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels_true, labels))
@@ -213,12 +214,12 @@ print('Estimated number of clusters: %d' % n_clusters_)
 
 import matplotlib.pyplot as plt
 
-plt.scatter(X[:,1],X[:,4],c=Y)
+plt.scatter(X[:,1],X[:,4],c=y)
 plt.show()
 
-plt.scatter(X[:,1],X[:,6],c=Y)
+plt.scatter(X[:,1],X[:,6],c=y)
 plt.show()
 
-plt.scatter(X[:,4],X[:,6],c=Y)
+plt.scatter(X[:,4],X[:,6],c=y)
 plt.show()
 
