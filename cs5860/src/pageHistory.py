@@ -104,15 +104,9 @@ nsrclen=srclen/max(srclen)
 
 X=np.vstack((npmin,npmean,npmax,nrmin,nrmean,nrmax,nsrclen.values)).transpose()
 
-from sklearn.cluster import DBSCAN
-
-#DBSCAN(eps=0.5, min_samples=5, metric='euclidean', algorithm='auto', leaf_size=30, p=None, random_state=None)[source]
-model=DBSCAN()
-Y=model.fit_predict(X)
-
-srcset=pdf2.groupby('src').src.apply(set)
 
 '''
+srcset=pdf2.groupby('src').src.apply(set)
 srcset[Y==-1]
 #850279091    set([850279091])
 pdf[pdf2.src==850279091]
@@ -121,18 +115,6 @@ pdf[pdf2.src==850279091]
 694156  cyber03.imaginet.fr     /images/USA-logosmall.gif  PASS
 694159  cyber03.imaginet.fr   /images/WORLD-logosmall.gif  PASS
 '''
-
-import matplotlib.pyplot as plt
-
-plt.scatter(X[:,1],X[:,4],c=Y)
-plt.show()
-
-plt.scatter(X[:,1],X[:,6],c=Y)
-plt.show()
-
-plt.scatter(X[:,4],X[:,6],c=Y)
-plt.show()
-
 
 # normalized
 lpmin=10.0*np.array(pmin)
@@ -149,35 +131,8 @@ lrmean[lrmean<0]=0
 
 X2=np.vstack((lpmin,lpmean,lpmax,lrmin,lrmean,lrmax,lsrclen)).transpose()
 
-from sklearn.cluster import DBSCAN
-model=DBSCAN()
-Y=model.fit_predict(X2)
-
-for i in set(list(Y)):
-    print i, sum(Y==i)
-
-import matplotlib.pyplot as plt
-
-plt.scatter(X2[:,1],X2[:,4],c=Y)
-plt.show()
-
-plt.scatter(X2[:,1],X2[:,6],c=Y)
-plt.show()
-
-plt.scatter(X2[:,4],X2[:,6],c=Y)
-plt.show()
-
-
-plt.scatter(X2[:,2],X2[:,5],c=Y)
-plt.show()
-
-plt.scatter(X2[:,2],X2[:,6],c=Y)
-plt.show()
-
-plt.scatter(X2[:,5],X2[:,6],c=Y)
-plt.show()
-
 # ===================
+#DBSCAN(eps=0.5, min_samples=5, metric='euclidean', algorithm='auto', leaf_size=30, p=None, random_state=None)[source]
 # http://scikit-learn.org/stable/auto_examples/cluster/plot_dbscan.html#example-cluster-plot-dbscan-py
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
@@ -185,41 +140,49 @@ from sklearn.datasets.samples_generator import make_blobs
 from sklearn.preprocessing import StandardScaler
 
 X=np.vstack((pmin,pmean,pmax,rmin,rmean,rmax,srclen.values)).transpose()
+#X=np.vstack((npmin,npmean,npmax,nrmin,nrmean,nrmax,nsrclen.values)).transpose()
 X = StandardScaler().fit_transform(X)
 
+# Y100 <= eps 10. => 0 cats , 5 outliers, na silhouette
+# Y40 <= eps 4. => 2 cats , 14 outliers, 0.918 silhouette
+# Y20 <= eps 2. => 4 cats , 31 outliers, 0.601 silhouette
+# Y20 <= eps 2. => 3 cats min samples 20, 71 outliers, 0.601 silhouette
+# Y10 <= eps 1. => 17 cats , 111 outliers, 0.297 silhouette
+# Y7 <= eps 0.7 => 23 cats , 214 outliers, -0.378 silhouette
+# Y5 <= eps 0.5 => 41 cats
+# Y7 <= eps 0.7, min_samples 20 => 18 cats
 
 Y = DBSCAN(eps=0.7, min_samples=10).fit(X)
-#core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-#core_samples_mask[db.core_sample_indices_] = True
-y = Y.labels_
 
+y = Y.labels_
+set(list(y))
 # Number of clusters in labels, ignoring noise if present.
-n_clusters_ = len(set(y)) - (1 if -1 in labels else 0)
+n_clusters_ = len(set(y)) - (1 if -1 in y else 0)
+sum(y==-1)
+print('Estimated number of clusters: %d' % n_clusters_)
+#print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X,y))
+print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X[0:10000,],y[0:10000]))
 
 for i in set(list(y)):
     print i, sum(y==i)
 
 
-print('Estimated number of clusters: %d' % n_clusters_)
-#print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels_true, labels))
-#print("Completeness: %0.3f" % metrics.completeness_score(labels_true, labels))
-#print("V-measure: %0.3f" % metrics.v_measure_score(labels_true, labels))
-#print("Adjusted Rand Index: %0.3f"
-#      % metrics.adjusted_rand_score(labels_true, labels))
-#print("Adjusted Mutual Information: %0.3f"
-#      % metrics.adjusted_mutual_info_score(labels_true, labels))
-#print("Silhouette Coefficient: %0.3f"
-#      % metrics.silhouette_score(X, labels))
-
-
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
-plt.scatter(X[:,1],X[:,4],c=y)
+yy=np.array(y)
+yy.shape = (yy.shape[0],1)
+results=pd.DataFrame(np.hstack((X,yy)))
+res=results.sort([7])
+
+plt.scatter(res[0],res[3],c=res[7],s=80,cmap=mpl.cm.Reds,alpha=0.1)
 plt.show()
 
-plt.scatter(X[:,1],X[:,6],c=y)
+plt.scatter(res[1],res[4],c=res[7],s=80,cmap=mpl.cm.Reds,alpha=0.1)
 plt.show()
 
-plt.scatter(X[:,4],X[:,6],c=y)
+plt.scatter(res[0],res[2],c=res[7],s=80,cmap=mpl.cm.Reds,alpha=0.5)
 plt.show()
 
+plt.scatter(res[3],res[5],c=res[7],s=80,cmap=mpl.cm.Reds,alpha=0.5)
+plt.show()
