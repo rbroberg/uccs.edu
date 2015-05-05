@@ -38,7 +38,7 @@ p = np.poly1d(z)
 
 plt.figure(figsize=(6,5))
 plt.plot(logranks,logfreq, label='page requests')
-plt.plot(logranks,p(logranks),"r—", label='linear fit first 1000 pages')
+plt.plot(logranks,p(logranks),"r-", label="linear fit first 1000 pages")
 plt.title("Zipf's Law in Nasa Apache Access Logs")
 plt.xlabel('log(page rank)')
 plt.ylabel('log(page frequency)')
