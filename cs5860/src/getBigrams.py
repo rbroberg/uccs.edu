@@ -69,7 +69,7 @@ def getTrigrams(x):
 def getTRIMI(x):
     return [triMI(':'.join([str(b[0]),str(b[1]),str(b[2])]),unigramdict, tcntdict) for b in x]
 
-'''
+#''
 # for each source, calculate bigrams
 if os.path.isfile('../data/tmp.bigrams.pkl'):
     bigrams=load_obj(bigrams)
@@ -104,7 +104,7 @@ else:
     bcntdict=Counter(bigrams2)
     save_obj(bcntdict,"tmp.bcntdict")
 
-'''
+
 sum(bcntdict.values()) # 3315616
 len(bcntdict.keys()) # 228180
 
@@ -122,23 +122,18 @@ else:
     save_obj(bidict,"tmp.bidict")
 
 
-    
-
-
 # lots of combinations
-[bcntdict[i] for i in bidict['2007143504']]
+#[bcntdict[i] for i in bidict['2007143504']]
 
-biMI('2007143504:-994741562', unigramdict, bcntdict)
-
-
-bysrc.get_group(-1061628487)
-sum[biMI(
+#biMI('2007143504:-994741562', unigramdict, bcntdict)
 
 
-bimi=bigrams.apply(getBIMI)
+#bysrc.get_group(-1061628487)
+
+#bimi=bigrams.apply(getBIMI)
+#''
 
 # ===============================
-
 
 if os.path.isfile('../data/tmp.trigrams.pkl'):
     trigrams=load_obj(trigrams)
