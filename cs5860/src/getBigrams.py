@@ -72,17 +72,23 @@ def getTRIMI(x):
 #''
 # for each source, calculate bigrams
 if os.path.isfile('../data/tmp.bigrams.pkl'):
-    bigrams=load_obj(bigrams)
+    bigrams=load_obj("tmp.bigrams")
 else:
     bigrams=pdf2.groupby('src').page.apply(getBigrams)
     save_obj(bigrams,"tmp.bigrams")
+
+if os.path.isfile('../data/tmp.bdict.pkl'):
+    bdict=load_obj("tmp.bdict")
+else:
+    bdict=bigrams.to_dict()
+    save_obj(bdict,"tmp.bdict")
 
 
 # for all bigrams, calc prob B given A
 # first, flatten src 'sensitive' bigram list
 # [[716482353,477775975], [477775975,716482353], [716482353,1862355765], ...]
 if os.path.isfile('../data/tmp.bflat.pkl'):
-    bflat=load_obj(bflat)
+    bflat=load_obj("tmp.bflat")
 else:
     bflat=[item for sublist in list(bigrams) for item in sublist]
     save_obj(bflat,"tmp.bflat")
@@ -90,16 +96,16 @@ else:
 
 # ['716482353:477775975', '477775975:716482353', '716482353:1862355765', ...]
 if os.path.isfile('../data/tmp.bigrams2.pkl'):
-    bgrams2=load_obj(bgrams2)
+    bigrams2=load_obj(bigrams2)
 else:
-    bigrams2=[':'.join([str(t[0]),str(t[1])]) for t in bflat]
+    bigrams2=[':'.join(t) for t in bflat]
     save_obj(bigrams2,"tmp.bgrams2")
 
 # bidict=[':'.join([str(t[0]),str(t[1])]) for t in bflat]
 
 # Counter is the program
 if os.path.isfile('../data/tmp.bcntdict.pkl'):
-    bcntdict=load_obj(bcntdict)
+    bcntdict=load_obj("tmp.bcntdict")
 else:
     bcntdict=Counter(bigrams2)
     save_obj(bcntdict,"tmp.bcntdict")
@@ -109,6 +115,7 @@ sum(bcntdict.values()) # 3315616
 len(bcntdict.keys()) # 228180
 
 # given A, what are the possible A:B bigrams
+'''
 if os.path.isfile('../data/tmp.bitdict.pkl'):
     bidict=load_obj(bidict)
 else:
@@ -120,7 +127,7 @@ else:
         except:
             bidict[a]=[i]
     save_obj(bidict,"tmp.bidict")
-
+'''
 
 # lots of combinations
 #[bcntdict[i] for i in bidict['2007143504']]
@@ -136,7 +143,7 @@ else:
 # ===============================
 
 if os.path.isfile('../data/tmp.trigrams.pkl'):
-    trigrams=load_obj(trigrams)
+    trigrams=load_obj("tmp.trigrams")
 else:
     trigrams=pdf2.groupby('src').page.apply(getTrigrams)
     save_obj(trigrams,"tmp.trigrams")
@@ -150,16 +157,16 @@ else:
 
 # ['716482353:477775975', '477775975:716482353', '716482353:1862355765', ...]
 if os.path.isfile('../data/tmp.tgrams2.pkl'):
-    tgrams2=load_obj(tgrams2)
+    tgrams2=load_obj("tmp.tgrams2")
 else:
-    tgrams2=[':'.join([str(t[0]),str(t[1])]) for t in tflat]
+    tgrams2=[':'.join(t) for t in tflat]
     save_obj(tgrams2,"tmp.tgrams2")
 
 # tridict=[':'.join([str(t[0]),str(t[1])]) for t in bflat]
 
 # Counter is the program
 if os.path.isfile('../data/tmp.tcntdict.pkl'):
-    tcntdict=load_obj(bcntdict)
+    tcntdict=load_obj("tmp.tcntdict")
 else:
     tcntdict=Counter(tgrams2)
     save_obj(tcntdict,"tmp.tcntdict")
