@@ -16,11 +16,16 @@ def sdnorm(z):
 # 20160128rb: beta
 from scipy.stats import beta
 def mybeta(z):
-    return beta.pdf(z,0.5,0.5)
+    return beta.pdf(z,2.,2.)
+    #return beta.pdf(z,5.,1.)
+    #return beta.pdf(z,2.,5.)
+    #return beta.pdf(z,0.5,0.5)
 
 n = 10000
-alpha = 1
-x = 0.
+#alpha = 1
+#x = 0.
+alpha = 0.499
+x = 0.5
 vec = []
 vec.append(x)
 innov = uniform(-alpha,alpha,n) #random inovation, uniform proposal distribution
