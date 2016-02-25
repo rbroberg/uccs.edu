@@ -1,0 +1,42 @@
+% EXAMPLE OF CONTINUOUS STATE-SPACE MARKOV CHAIN
+ 
+% INITIALIZE
+randn('seed',12345)
+nBurnin = 50; % # BURNIN
+nChains = 5;  % # MARKOV CHAINS
+ 
+% DEFINE TRANSITION OPERATOR
+P = inline('normrnd(.5*x,1,1,nChains)','x','nChains');
+nTransitions = 1000;
+x = zeros(nTransitions,nChains);
+x(1,:) = randn(1,nChains);
+ 
+% RUN THE CHAINS
+for iT = 2:nTransitions
+    x(iT,:) = P(x(iT-1),nChains);
+end
+ 
+% DISPLAY BURNIN
+figure
+subplot(221); plot(x(1:100,:)); hold on;
+minn = min(x(:));
+maxx = max(x(:));
+l = line([nBurnin nBurnin],[minn maxx],'color','k','Linewidth',2);
+ylim([minn maxx])
+legend(l,'~Burn-in','Location','SouthEast')
+title('First 100 Samples'); hold off
+ 
+% DISPLAY ENTIRE MARKOV CHAIN
+subplot(223); plot(x);hold on;
+l = line([nBurnin nBurnin],[minn maxx],'color','k','Linewidth',2);
+legend(l,'~Burn-in','Location','SouthEast')
+title('Entire Chain');
+ 
+% DISPLAY SAMPLES FROM STATIONARY DISTRIBUTION
+samples = x(nBurnin+1:end,:);
+subplot(122);
+[counts,bins] = hist(samples(:),100); colormap hot
+b = bar(bins,counts);
+legend(b,sprintf('Markov Chain\nSamples'));
+title(['\mu=',num2str(mean(samples(:))),' \sigma=',num2str(var(samples(:)))])
+
