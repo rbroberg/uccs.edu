@@ -1,11 +1,8 @@
-# FINITE STATE-SPACE MARKOV CHAIN EXAMPLE
+# example of finite markov chain
 import numpy as np
-import scipy.stats as stats
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-import pylab
 
-# TRANSITION OPERATOR
+# transition matrix
 # S = Sunny
 # F = Foggy
 # R = Rainy
@@ -22,15 +19,14 @@ nWeeks = 25
 # time series of state vectors
 X = np.zeros((nWeeks,3)) 
 
-#INITIAL STATE IS RAINY
+# initial state is rainy
 X[0,:] = [0,0,1];
  
-# RUN MARKOV CHAIN
+# run markov chain
 for iB in range(nWeeks-1):
     X[iB+1,:] = np.dot(X[iB,:],P)
 
-# DISPLAY
-
+# plot
 plt.plot(X[:,0],color='r',linewidth=2,label='Sunny')
 plt.plot(X[:,1],color='k',linewidth=2,label='Foggy')
 plt.plot(X[:,2],color='b',linewidth=2,label='Rainy')
