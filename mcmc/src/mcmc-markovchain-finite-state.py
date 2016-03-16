@@ -10,10 +10,20 @@ import matplotlib.pyplot as plt
 #  S->F F->F R->F
 #  S->R F->R R->R
 
+# this follows Dunn and Shultis 2012
+P = np.array([[ 0.3 ,  0.4,   0.3],
+              [ 0.3 ,  0.2,   0.5 ],
+              [ 0.4 ,  0.1,   0.5 ]])
+
+# this follows wiki market model
+P = np.array([[ 0.9 ,  0.075,   0.025],
+              [ 0.15 ,  0.8 ,  0.05 ],
+              [ 0.25 ,  0.25 ,  0.5 ]])
+
+# this follows Stansbury 2012
 P = np.array([[ 0.8 ,  0.15,  0.05],
               [ 0.4 ,  0.5 ,  0.1 ],
               [ 0.1 ,  0.3 ,  0.6 ]])
-
 nWeeks = 25
 
 # time series of state vectors
